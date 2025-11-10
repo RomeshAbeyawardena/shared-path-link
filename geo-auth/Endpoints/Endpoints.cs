@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace geo_auth;
 
@@ -14,7 +13,8 @@ public static class Endpoints
     public static async Task<User> ProcessTokenAsync(IConfiguration configuration, PasswordSalterRequest request, CancellationToken cancellationToken)
     {
         //TODO!
-        var key = new SymmetricSecurityKey(Convert.FromBase64String(configuration["SigningKey"]
+        var key = new SymmetricSecurityKey(Convert
+            .FromBase64String(configuration["SigningKey"]
             ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError)));
         var signingCredentials = new SigningCredentials(key
             , SecurityAlgorithms.HmacSha256);
@@ -27,8 +27,7 @@ public static class Endpoints
             ValidIssuer = configuration["ValidIssuer"],
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = key,
-            ValidateTokenReplay = true,
-            TokenReplayValidator = new TokenReplayValidator(ValidateTokenReplay)
+            ValidateTokenReplay = true
         });
 
         var user = new User();
@@ -67,11 +66,6 @@ public static class Endpoints
         }
 
         return user;
-    }
-
-    private static bool ValidateTokenReplay(DateTime? expirationTime, string securityToken, TokenValidationParameters validationParameters)
-    {
-        throw new NotImplementedException();
     }
 
     [Function("password-salter")]
