@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "C:\\dev\\shared-pathlink\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standardresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\standardresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\dev\\shared-pathlink\\MyHttpTrigger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:MyHttpTrigger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth.csproj|solutionrelative:geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,26 +34,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MyHttpTrigger.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\MyHttpTrigger.cs",
-              "RelativeDocumentMoniker": "MyHttpTrigger.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\MyHttpTrigger.cs",
-              "RelativeToolTip": "MyHttpTrigger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "StandardResponse.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardResponse.cs",
+              "RelativeDocumentMoniker": "geo-auth\\Models\\StandardResponse.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardResponse.cs",
+              "RelativeToolTip": "geo-auth\\Models\\StandardResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T13:02:44.058Z",
+              "WhenOpened": "2025-11-10T13:12:56.076Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Endpoints.cs",
               "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
               "RelativeDocumentMoniker": "geo-auth\\Endpoints\\Endpoints.cs",
               "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
               "RelativeToolTip": "geo-auth\\Endpoints\\Endpoints.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-10T12:53:32.18Z",
               "EditorCaption": ""
@@ -68,8 +68,7 @@
               "RelativeToolTip": "geo-auth\\Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-10T13:01:12.165Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-10T13:01:12.165Z"
             },
             {
               "$type": "Document",
@@ -81,8 +80,7 @@
               "RelativeToolTip": "geo-auth\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T12:48:48.948Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-10T12:48:48.948Z"
             }
           ]
         }
