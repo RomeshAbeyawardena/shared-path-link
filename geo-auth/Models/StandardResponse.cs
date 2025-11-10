@@ -5,6 +5,16 @@ namespace geo_auth.Models;
 
 internal abstract record StandardResponse<T> : IResult
 {
+    protected StandardResponse(Guid? automationId)
+    {
+        AutomationId = automationId;
+    }
+
+    protected StandardResponse() : this((Guid?)null)
+    {
+        
+    }
+
     protected abstract T? Result { get; }
     public int? StatusCode { get; protected set; }
 
