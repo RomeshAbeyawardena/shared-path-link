@@ -21,9 +21,9 @@ internal record PasswordSalterResponse : StandardResponse<IPasswordSalterRespons
         
     }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore]
     public string? Hash { get; init; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore]
     public string? Salt { get; init; }
 }

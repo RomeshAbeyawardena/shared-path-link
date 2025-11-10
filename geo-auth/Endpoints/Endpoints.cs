@@ -1,4 +1,5 @@
 ﻿using geo_auth.Models;
+using Konscious.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -7,11 +8,22 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace geo_auth;
 
 public static class Endpoints
 {
+    public static byte[] GenerateSalt(int size = 16)
+    {
+        var salt = new byte[size];
+        RandomNumberGenerator.Fill(salt);
+        return salt;
+    }
+
+
     public static async Task<User> ProcessTokenAsync(IConfiguration configuration, PasswordSalterRequest request, CancellationToken cancellationToken)
     {
         //TODO!
@@ -46,12 +58,12 @@ public static class Endpoints
             user.ClientId = cid;
         }
 
-        if (token.Claims.TryGetValue("sub", out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
+        if (token.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
         {
             user.Id = sid;
         }
 
-        if (token.Claims.TryGetValue("email", out var email))
+        if (token.Claims.TryGetValue(ClaimTypes.Email, out var email))
         {
             user.Email = email?.ToString();
         }
@@ -119,9 +131,27 @@ public static class Endpoints
                 data ?? throw requiredException, executionContext.CancellationToken)
                 ?? throw new ResponseException("Unable to validate token", StatusCodes.Status400BadRequest);
 
+            if (string.IsNullOrWhiteSpace(user.Salt))
+            {
+                user.Salt = Convert.ToBase64String(GenerateSalt());
+            }
 
+            var hashedPassword = new Argon2id(Encoding.UTF8.GetBytes(user.Secret
+                ?? throw new ResponseException("Secret must not be empty", StatusCodes.Status400BadRequest)))
+            {
+                KnownSecret = Encoding.UTF8.GetBytes(configuration["KnownSecret"] 
+                    ?? throw new ResponseException("KnownSecret is empty", StatusCodes.Status500InternalServerError)),
+                Salt = Convert.FromBase64String(user.Salt),
+                DegreeOfParallelism = 4,
+                MemorySize = 65536,
+                Iterations = 4
+            }.GetBytes(32);
 
-            return new PasswordSalterResponse(automationId);
+            return new PasswordSalterResponse(automationId)
+            {
+                Hash = Convert.ToBase64String(hashedPassword),
+                Salt = user.Salt
+            };
         }
         catch (ResponseException ex)
         {
