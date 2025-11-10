@@ -1,14 +1,69 @@
 ﻿using geo_auth.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth;
 
 public static class Endpoints
 {
-    public static async Task ProcessToken(PasswordSalterRequest request, CancellationToken cancellationToken)
+    public static async Task<User> ProcessTokenAsync(PasswordSalterRequest request, CancellationToken cancellationToken)
     {
         //TODO!
+        var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidAudience = "",
+            ValidateIssuer = true,
+            ValidIssuer = "",
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey([]),
+            ValidateTokenReplay = true,
+            TokenReplayValidator = new TokenReplayValidator(ValidateTokenReplay)
+        });
+
+        var user = new User();
+
+        if (token.IsValid)
+        {
+            if (token.Claims.TryGetValue("clientId", out var clientId) && Guid.TryParse(clientId?.ToString(), out var cid))
+            {
+                user.ClientId = cid;
+            }
+
+            if (token.Claims.TryGetValue("sub", out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
+            {
+                user.Id = sid;
+            }
+
+            if (token.Claims.TryGetValue("email", out var email))
+            {
+                user.Email = email?.ToString();
+            }
+
+            if (token.Claims.TryGetValue("name", out var name))
+            {
+                user.Name = name?.ToString();
+            }
+
+            if (token.Claims.TryGetValue("secret", out var secret))
+            {
+                user.Secret = secret?.ToString();
+            }
+
+            if (token.Claims.TryGetValue("salt", out var salt))
+            {
+                user.Salt = salt?.ToString();
+            }
+        }
+
+        return user;
+    }
+
+    private static bool ValidateTokenReplay(DateTime? expirationTime, string securityToken, TokenValidationParameters validationParameters)
+    {
+        throw new NotImplementedException();
     }
 
     [Function("password-salter")]
@@ -16,8 +71,6 @@ public static class Endpoints
         FunctionContext executionContext)
     {
         string[] acceptableEncodings = ["jwt"];
-
-
         Guid? automationId = request.Headers.TryGetValue("automation-id", out var automationIdValue)
             && Guid.TryParse(automationIdValue, out var id) ? id : null;
         try
@@ -51,7 +104,11 @@ public static class Endpoints
                     ?? throw requiredException;
             }
 
-            await ProcessToken(data ?? throw requiredException, executionContext.CancellationToken);
+            var user = await ProcessTokenAsync(data ?? throw requiredException, executionContext.CancellationToken)
+                ?? throw new ResponseException("Unable to validate token", StatusCodes.Status400BadRequest);
+
+            
+
             return new PasswordSalterResponse(automationId);
         }
         catch (ResponseException ex)
