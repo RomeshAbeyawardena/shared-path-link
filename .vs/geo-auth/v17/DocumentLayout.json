@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "C:\\dev\\shared-pathlink\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standardresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,26 +42,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ResponseException.cs",
               "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\ResponseException.cs",
               "RelativeDocumentMoniker": "geo-auth\\Models\\ResponseException.cs",
               "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\ResponseException.cs",
               "RelativeToolTip": "geo-auth\\Models\\ResponseException.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABfAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-10T13:57:55.297Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "StandardErrorResponse.cs",
               "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardErrorResponse.cs",
               "RelativeDocumentMoniker": "geo-auth\\Models\\StandardErrorResponse.cs",
               "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardErrorResponse.cs",
               "RelativeToolTip": "geo-auth\\Models\\StandardErrorResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-10T13:54:34.971Z",
               "EditorCaption": ""
@@ -81,13 +81,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Endpoints.cs",
               "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
               "RelativeDocumentMoniker": "geo-auth\\Endpoints\\Endpoints.cs",
               "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
               "RelativeToolTip": "geo-auth\\Endpoints\\Endpoints.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABsAAACVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-10T12:53:32.18Z",
               "EditorCaption": ""
@@ -106,13 +106,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Program.cs",
               "RelativeDocumentMoniker": "geo-auth\\Program.cs",
               "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Program.cs",
               "RelativeToolTip": "geo-auth\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-10T12:48:48.948Z",
               "EditorCaption": ""
