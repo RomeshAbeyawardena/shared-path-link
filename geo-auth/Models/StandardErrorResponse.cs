@@ -13,14 +13,21 @@ internal record StandardErrorResponse : StandardResponse<StandardErrorResponse>
     }
 
     public StandardErrorResponse(Exception exception, int statusCode)
+        : this(exception, statusCode, null)
+    {
+        
+    }
+
+    public StandardErrorResponse(Exception exception, int statusCode, Guid? automationId)
+        : base(automationId)
     {
         Message = exception.Message;
         Details = exception.StackTrace;
         StatusCode = statusCode;
     }
 
-    public StandardErrorResponse(ResponseException responseException)
-        : this(responseException, responseException.StatusCode.GetValueOrDefault(StatusCodes.Status500InternalServerError))
+    public StandardErrorResponse(ResponseException responseException, Guid? automationId)
+        : this(responseException, responseException.StatusCode.GetValueOrDefault(StatusCodes.Status500InternalServerError), automationId)
     {
 
     }

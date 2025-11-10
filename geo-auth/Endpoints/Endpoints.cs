@@ -4,26 +4,6 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace geo_auth;
 
-internal record PasswordSalterResponse : StandardResponse<PasswordSalterResponse>
-{
-    public PasswordSalterResponse()
-    {
-        
-    }
-
-    public PasswordSalterResponse(Guid? automationId) : base(automationId)
-    {
-        
-    }
-
-    protected override PasswordSalterResponse? Result => this;
-}
-
-public record PasswordSalterRequest
-{
-    public string? Token { get; set; }
-}
-
 public static class Endpoints
 {
     public static async Task ProcessToken(PasswordSalterRequest request, CancellationToken cancellationToken)
@@ -36,6 +16,10 @@ public static class Endpoints
         FunctionContext executionContext)
     {
         string[] acceptableEncodings = ["jwt"];
+
+
+        Guid? automationId = request.Headers.TryGetValue("automation-id", out var automationIdValue)
+            && Guid.TryParse(automationIdValue, out var id) ? id : null;
         try
         {
             if (request.QueryString.HasValue)
@@ -49,9 +33,6 @@ public static class Endpoints
             {
                 throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
             }
-
-            Guid? automationId = request.Headers.TryGetValue("automation-id", out var automationIdValue) 
-                && Guid.TryParse(automationIdValue, out var id) ? id : null;
 
             PasswordSalterRequest? data = null;
             var requiredException = new ResponseException("Token is a required field", StatusCodes.Status400BadRequest);
@@ -75,11 +56,11 @@ public static class Endpoints
         }
         catch (ResponseException ex)
         {
-            return new StandardErrorResponse(ex);
+            return new StandardErrorResponse(ex, automationId);
         }
         catch (Exception ex)
         {
-            return new StandardErrorResponse(ex, StatusCodes.Status500InternalServerError);
+            return new StandardErrorResponse(ex, StatusCodes.Status500InternalServerError, automationId);
         }
     }
 }
