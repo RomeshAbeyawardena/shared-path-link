@@ -32,37 +32,39 @@ public static class Endpoints
 
         var user = new User();
 
-        if (token.IsValid)
+        if (!token.IsValid)
         {
-            if (token.Claims.TryGetValue("clientId", out var clientId) && Guid.TryParse(clientId?.ToString(), out var cid))
-            {
-                user.ClientId = cid;
-            }
+            throw new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable);
+        }
 
-            if (token.Claims.TryGetValue("sub", out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
-            {
-                user.Id = sid;
-            }
+        if (token.Claims.TryGetValue("clientId", out var clientId) && Guid.TryParse(clientId?.ToString(), out var cid))
+        {
+            user.ClientId = cid;
+        }
 
-            if (token.Claims.TryGetValue("email", out var email))
-            {
-                user.Email = email?.ToString();
-            }
+        if (token.Claims.TryGetValue("sub", out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
+        {
+            user.Id = sid;
+        }
 
-            if (token.Claims.TryGetValue("name", out var name))
-            {
-                user.Name = name?.ToString();
-            }
+        if (token.Claims.TryGetValue("email", out var email))
+        {
+            user.Email = email?.ToString();
+        }
 
-            if (token.Claims.TryGetValue("secret", out var secret))
-            {
-                user.Secret = secret?.ToString();
-            }
+        if (token.Claims.TryGetValue("name", out var name))
+        {
+            user.Name = name?.ToString();
+        }
 
-            if (token.Claims.TryGetValue("salt", out var salt))
-            {
-                user.Salt = salt?.ToString();
-            }
+        if (token.Claims.TryGetValue("secret", out var secret))
+        {
+            user.Secret = secret?.ToString();
+        }
+
+        if (token.Claims.TryGetValue("salt", out var salt))
+        {
+            user.Salt = salt?.ToString();
         }
 
         return user;
@@ -109,11 +111,11 @@ public static class Endpoints
 
             var configuration = request.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
 
-            var user = await ProcessTokenAsync(configuration, 
+            var user = await ProcessTokenAsync(configuration,
                 data ?? throw requiredException, executionContext.CancellationToken)
                 ?? throw new ResponseException("Unable to validate token", StatusCodes.Status400BadRequest);
 
-            
+
 
             return new PasswordSalterResponse(automationId);
         }

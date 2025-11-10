@@ -12,8 +12,8 @@ builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
-//builder
-  //  .Configuration
-    //.AddUserSecrets(typeof(Program).Assembly);
+builder
+    .Configuration
+    .AddUserSecrets(typeof(Program).Assembly);
 
 builder.Build().Run();
