@@ -3,6 +3,23 @@ using System.Text.Json.Serialization;
 
 namespace geo_auth.Models;
 
+internal abstract record StandardResponse<TContract, T> : StandardResponse<T>
+    where T : TContract
+{
+    protected StandardResponse(Guid? automationId)
+    {
+        AutomationId = automationId;
+    }
+
+    protected StandardResponse() : this((Guid?)null)
+    {
+
+    }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
+    public TContract? Data => Result;
+}
+
 internal abstract record StandardResponse<T> : IResult
 {
     protected StandardResponse(Guid? automationId)

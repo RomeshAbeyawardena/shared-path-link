@@ -22,7 +22,7 @@ internal record StandardErrorResponse : StandardResponse<StandardErrorResponse>
         : base(automationId)
     {
         Message = exception.Message;
-        Details = exception.StackTrace;
+        Details = exception.StackTrace ?? exception.InnerException?.Message;
         StatusCode = statusCode;
     }
 

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth;
@@ -13,11 +15,11 @@ public static class Endpoints
     public static async Task<User> ProcessTokenAsync(IConfiguration configuration, PasswordSalterRequest request, CancellationToken cancellationToken)
     {
         //TODO!
-        var key = new SymmetricSecurityKey(Convert
-            .FromBase64String(configuration["SigningKey"]
-            ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError)));
-        var signingCredentials = new SigningCredentials(key
-            , SecurityAlgorithms.HmacSha256);
+        var signingKey = configuration["SigningKey"] ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
+        var key = new SymmetricSecurityKey(Convert.FromBase64String(signingKey))
+        {
+            KeyId = configuration["SigningKeyId"] ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
+        };
 
         var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
         {
@@ -26,15 +28,17 @@ public static class Endpoints
             ValidateIssuer = true,
             ValidIssuer = configuration["ValidIssuer"],
             ValidateIssuerSigningKey = true,
+            ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
             IssuerSigningKey = key,
-            ValidateTokenReplay = true
+            //ValidateTokenReplay = true
         });
 
         var user = new User();
 
         if (!token.IsValid)
         {
-            throw new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable);
+            IdentityModelEventSource.ShowPII = true;
+            throw new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable, token.Exception);
         }
 
         if (token.Claims.TryGetValue("clientId", out var clientId) && Guid.TryParse(clientId?.ToString(), out var cid))
@@ -70,7 +74,7 @@ public static class Endpoints
         return user;
     }
 
-    [Function("password-salter")]
+    [Function("hasher")]
     public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request,
         FunctionContext executionContext)
     {

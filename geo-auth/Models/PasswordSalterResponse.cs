@@ -1,7 +1,16 @@
-﻿namespace geo_auth.Models;
+﻿using System.Text.Json.Serialization;
 
-internal record PasswordSalterResponse : StandardResponse<PasswordSalterResponse>
+namespace geo_auth.Models;
+
+internal interface IPasswordSalterResponse
 {
+    string? Hash { get; }
+    string? Salt { get; }
+}
+
+internal record PasswordSalterResponse : StandardResponse<IPasswordSalterResponse, PasswordSalterResponse>, IPasswordSalterResponse
+{
+    protected override PasswordSalterResponse? Result => this;
     public PasswordSalterResponse()
     {
         
@@ -12,5 +21,9 @@ internal record PasswordSalterResponse : StandardResponse<PasswordSalterResponse
         
     }
 
-    protected override PasswordSalterResponse? Result => this;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
+    public string? Hash { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
+    public string? Salt { get; init; }
 }
