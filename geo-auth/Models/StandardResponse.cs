@@ -1,24 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace geo_auth.Models;
-
-internal abstract class ResponseException: Exception
-{
-    public int? StatusCode { get; set; }
-    protected ResponseException(Exception exception, int statusCode)
-       : base(exception.Message, exception.InnerException)
-    {
-        HelpLink = exception.HelpLink;
-        StatusCode = statusCode;
-        StackTrace = exception.StackTrace;
-        Data = exception.Data;
-    }
-
-    public override string? StackTrace { get; }
-    public override IDictionary Data { get; }
-}
 
 internal abstract record StandardResponse<T> : IResult
 {
