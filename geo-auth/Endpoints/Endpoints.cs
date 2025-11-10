@@ -1,24 +1,32 @@
 ﻿using geo_auth.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace geo_auth;
 
 public static class Endpoints
 {
-    public static async Task<User> ProcessTokenAsync(PasswordSalterRequest request, CancellationToken cancellationToken)
+    public static async Task<User> ProcessTokenAsync(IConfiguration configuration, PasswordSalterRequest request, CancellationToken cancellationToken)
     {
         //TODO!
+        var key = new SymmetricSecurityKey(Convert.FromBase64String(configuration["SigningKey"]
+            ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError)));
+        var signingCredentials = new SigningCredentials(key
+            , SecurityAlgorithms.HmacSha256);
+
         var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
         {
             ValidateAudience = true,
-            ValidAudience = "",
+            ValidAudience = configuration["ValidAudience"],
             ValidateIssuer = true,
-            ValidIssuer = "",
+            ValidIssuer = configuration["ValidIssuer"],
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey([]),
+            IssuerSigningKey = key,
             ValidateTokenReplay = true,
             TokenReplayValidator = new TokenReplayValidator(ValidateTokenReplay)
         });
@@ -104,7 +112,10 @@ public static class Endpoints
                     ?? throw requiredException;
             }
 
-            var user = await ProcessTokenAsync(data ?? throw requiredException, executionContext.CancellationToken)
+            var configuration = request.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+
+            var user = await ProcessTokenAsync(configuration, 
+                data ?? throw requiredException, executionContext.CancellationToken)
                 ?? throw new ResponseException("Unable to validate token", StatusCodes.Status400BadRequest);
 
             

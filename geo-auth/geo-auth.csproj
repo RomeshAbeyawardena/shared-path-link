@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>geo_auth</RootNamespace>
+    <UserSecretsId>d9fd45ea-131a-4a91-8e32-5fca3170b6e6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
