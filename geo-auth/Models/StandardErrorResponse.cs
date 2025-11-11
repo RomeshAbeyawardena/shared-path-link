@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GeoAuth.Shared.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace geo_auth.Models;
 

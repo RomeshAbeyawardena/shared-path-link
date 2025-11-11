@@ -1,34 +1,21 @@
 ﻿using geo_auth.Handlers.Passwords;
 using geo_auth.Models;
-using GeoAuth.Shared.Models;
+using GeoAuth.Shared.Exceptions;
+using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Requests.Input;
 using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace geo_auth;
 
 public static class Endpoints
 {
-    public static void EnsureSuccessOrThrow<T>(IResult<T> result)
-    {
-        if (!result.IsSuccess)
-        {
-            if (result.Exception is not null)
-            {
-                throw ResponseException.Transform(result.Exception);
-            }
-
-            throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
-        }
-    }
-
     [Function("hasher")]
-    public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request,
+    public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
         FunctionContext executionContext)
     {
         string[] acceptableEncodings = ["jwt"];
@@ -43,21 +30,21 @@ public static class Endpoints
                 AcceptableEncodings = acceptableEncodings,
                 HttpContext = request.HttpContext }, cancellationToken);
 
-            EnsureSuccessOrThrow(inputResponse);
+            inputResponse.EnsureSuccessOrThrow();
 
             var data = inputResponse.Result;
 
             var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
                 ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
 
-            EnsureSuccessOrThrow(userDataResponse);
+            userDataResponse.EnsureSuccessOrThrow();
 
             var user = userDataResponse.Result
                 ?? throw new ResponseException("User result object is unexpectedly null", StatusCodes.Status500InternalServerError);
 
             var hasherResponse = await mediator.Send(new GeneratePasswordHashCommand(user), cancellationToken);
 
-            EnsureSuccessOrThrow(hasherResponse);
+            hasherResponse.EnsureSuccessOrThrow();
 
             return new PasswordHashResponse(hasherResponse.Result
                 ?? throw new ResponseException("Hasher result object is unexpectedly null", StatusCodes.Status500InternalServerError), automationId);

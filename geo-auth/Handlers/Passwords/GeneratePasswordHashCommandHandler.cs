@@ -1,4 +1,4 @@
-﻿using geo_auth.Models;
+﻿using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Requests.Passwords;
 using Konscious.Security.Cryptography;
 using MediatR;

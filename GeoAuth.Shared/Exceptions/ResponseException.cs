@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections;
+﻿using System.Collections;
 
-namespace geo_auth.Models;
+namespace GeoAuth.Shared.Exceptions;
 
-internal class ResponseException: Exception
+public class ResponseException: Exception
 {
     /// <summary>
     /// Wraps an exception into <see cref="ResponseException"/> if the passed <paramref name="exception"/> is not a derived <see cref="ResponseException"/>.
@@ -20,12 +19,12 @@ internal class ResponseException: Exception
             return responseException;
         }
 
-        return new ResponseException(exception, wrapperTransformedStatusCode.GetValueOrDefault(StatusCodes.Status500InternalServerError));
+        return new ResponseException(exception, wrapperTransformedStatusCode.GetValueOrDefault(500));
     }
 
     public int? StatusCode { get; set; }
     public ResponseException(string message, int? statusCode, Exception? innerException = null)
-        : this(new Exception(message, innerException), statusCode.GetValueOrDefault(StatusCodes.Status500InternalServerError))
+        : this(new Exception(message, innerException), statusCode.GetValueOrDefault(500))
     {
 
     }
