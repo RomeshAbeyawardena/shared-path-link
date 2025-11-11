@@ -6,14 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace geo_auth.Handlers.Input
 {
-    internal class ValidateRequestCommandHandler(IHttpContextAccessor contextAccessor, 
-        ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, PasswordHasherRequestResult>
+    internal class ValidateRequestCommandHandler(ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, PasswordHasherRequestResult>
     {
         public async Task<PasswordHasherRequestResult> Handle(ValidateRequestCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var context = contextAccessor?.HttpContext 
+                var context = request.HttpContext
                     ?? throw new ResponseException("Unexpected error: Context unavailable", StatusCodes.Status500InternalServerError);
 
                 PasswordHasherRequest? data = null;

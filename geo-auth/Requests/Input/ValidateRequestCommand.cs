@@ -1,5 +1,6 @@
 ﻿using GeoAuth.Shared.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace GeoAuth.Shared.Requests.Input;
 
@@ -13,7 +14,7 @@ public record PasswordHasherRequestResult(PasswordHasherRequest? Result, Excepti
 
 }
 
-public record ValidateRequestCommand : IRequest<PasswordHasherRequestResult>
+public class ValidateRequestCommand : IRequest<PasswordHasherRequestResult>
 {
-
+    public HttpContext? HttpContext { get; init; }
 }

@@ -13,7 +13,6 @@ builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights()
     .ConfigureOptions(builder.Configuration)
-    .AddHttpContextAccessor()
     .RegisterHandlers();
 
 builder

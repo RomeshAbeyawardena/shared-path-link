@@ -38,7 +38,7 @@ public static class Endpoints
                 throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
             }
 
-            var inputResponse = await mediator.Send(new ValidateRequestCommand { }, cancellationToken);
+            var inputResponse = await mediator.Send(new ValidateRequestCommand { HttpContext = request.HttpContext }, cancellationToken);
             
             if (!inputResponse.IsSuccess)
             {
