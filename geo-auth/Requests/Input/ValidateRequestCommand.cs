@@ -16,5 +16,6 @@ public record PasswordHasherRequestResult(PasswordHasherRequest? Result, Excepti
 
 public class ValidateRequestCommand : IRequest<PasswordHasherRequestResult>
 {
+    public IEnumerable<string> AcceptableEncodings { get; init; } = [];
     public HttpContext? HttpContext { get; init; }
 }

@@ -25,20 +25,9 @@ public static class Endpoints
         var cancellationToken = executionContext.CancellationToken;
         try
         {
-            if (request.QueryString.HasValue)
-            {
-                throw new ResponseException("Sensitive parameters should not be passed in the URL of a public method. If using a JWT token, safely encode it and include the header 'Accept-Encoding: jwt'. Supply the token as a 'token' field in the request body or as form data to ensure secure transmission.", StatusCodes.Status400BadRequest);
-            }
-
-            var acceptedEncodings = request.Headers.AcceptEncoding.Where(x => !string.IsNullOrWhiteSpace(x))
-                .SelectMany(x => x!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
-
-            if (!acceptedEncodings.Any(acceptableEncodings.Contains))
-            {
-                throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
-            }
-
-            var inputResponse = await mediator.Send(new ValidateRequestCommand { HttpContext = request.HttpContext }, cancellationToken);
+            var inputResponse = await mediator.Send(new ValidateRequestCommand { 
+                AcceptableEncodings = acceptableEncodings,
+                HttpContext = request.HttpContext }, cancellationToken);
             
             if (!inputResponse.IsSuccess)
             {

@@ -15,6 +15,20 @@ namespace geo_auth.Handlers.Input
                 var context = request.HttpContext
                     ?? throw new ResponseException("Unexpected error: Context unavailable", StatusCodes.Status500InternalServerError);
 
+                if (context.Request.QueryString.HasValue)
+                {
+                    throw new ResponseException("Sensitive parameters should not be passed in the URL of a public method. If using a JWT token, safely encode it and include the header 'Accept-Encoding: jwt'. Supply the token as a 'token' field in the request body or as form data to ensure secure transmission.", StatusCodes.Status400BadRequest);
+                }
+
+                var acceptedEncodings = context.Request.Headers.AcceptEncoding.Where(x => !string.IsNullOrWhiteSpace(x))
+                    .SelectMany(x => x!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+
+                if (!acceptedEncodings.Any(request.AcceptableEncodings.Contains))
+                {
+                    throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
+                }
+
+
                 PasswordHasherRequest? data = null;
                 var requiredException = new ResponseException("Token is a required field", StatusCodes.Status400BadRequest);
                 if (context.Request.HasFormContentType)
