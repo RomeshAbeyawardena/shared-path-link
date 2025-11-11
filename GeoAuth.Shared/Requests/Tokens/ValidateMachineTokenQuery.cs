@@ -3,7 +3,7 @@ using MediatR;
 
 namespace GeoAuth.Shared.Requests.Tokens;
 
-public record MachineTokenQueryResponse(string? MachineId, string? Secret)
+public record MachineTokenQueryResponse(Guid? MachineId, string? Secret)
 {
 
 }

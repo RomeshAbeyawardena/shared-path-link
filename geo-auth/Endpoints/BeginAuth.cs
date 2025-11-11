@@ -12,17 +12,6 @@ using System.Text.Json;
 
 namespace geo_auth;
 
-internal record MachineData
-{
-    public Guid MachineId { get; set; }
-    public string? Secret { get; set; }
-}
-
-internal record BlobConfiguration
-{
-    public IEnumerable<MachineData> Machines { get; set; } = [];
-}
-
 public static partial class Endpoints
 {
     [Function("begin-auth")]
@@ -33,28 +22,34 @@ public static partial class Endpoints
     {
         Guid? automationId = GetAutomationId(request.Headers);
 
-        var mediator = request.HttpContext.RequestServices
+        var services = request.HttpContext.RequestServices;
+        var mediator = services
             .GetRequiredService<IMediator>();
 
+        var jsonOptions = services.GetRequiredService<JsonSerializerOptions>();
         var cancellationToken = executionContext.CancellationToken;
 
         try
         {
-            var jsonOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            var configuration = JsonSerializer.Deserialize<RegisteredMachineConfiguration>(content, jsonOptions);
 
-            var configuration = JsonSerializer.Deserialize<BlobConfiguration>(content, jsonOptions);
-
-            var validateRequestResult = await mediator.Send(new ValidateRequestCommand() { HttpContext = request.HttpContext }, cancellationToken);
+            var validateRequestResult = await mediator.Send(new ValidateRequestCommand() { 
+                AcceptableEncodings = ["jwt"], 
+                HttpContext = request.HttpContext }, cancellationToken);
 
             validateRequestResult.EnsureSuccessOrThrow();
 
             var machineTokenQueryResult = await mediator.Send(new ValidateMachineTokenQuery(validateRequestResult.Result?.Token
-                ?? throw new ResponseException("Token is a required field", StatusCodes.Status500InternalServerError)), cancellationToken);
+                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
 
             machineTokenQueryResult.EnsureSuccessOrThrow();
+
+            var isValid = configuration?.IsRegistered(machineTokenQueryResult.Result ??
+                throw new ResponseException("Unexpected null object", StatusCodes.Status500InternalServerError));
+
+            if (!isValid.GetValueOrDefault()){
+                throw new ResponseException("Invalid request", StatusCodes.Status401Unauthorized);
+            }
 
             return new AuthTokenResponse(null!, automationId);
 
