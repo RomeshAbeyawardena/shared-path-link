@@ -1,5 +1,6 @@
 ﻿using geo_auth.Handlers.Passwords;
 using geo_auth.Models;
+using GeoAuth.Shared.Requests.Input;
 using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
@@ -37,22 +38,19 @@ public static class Endpoints
                 throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
             }
 
-            PasswordHasherRequest? data = null;
-            var requiredException = new ResponseException("Token is a required field", StatusCodes.Status400BadRequest);
-            if (request.HasFormContentType)
+            var inputResponse = await mediator.Send(new ValidateRequestCommand { }, cancellationToken);
+            
+            if (!inputResponse.IsSuccess)
             {
-                if (!request.Form.TryGetValue("token", out var token))
+                if (inputResponse.Exception is not null)
                 {
-                    throw requiredException;
+                    throw ResponseException.Transform(inputResponse.Exception);
                 }
 
-                data = new PasswordHasherRequest { Token = token };
+                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
             }
-            else if (request.HasJsonContentType())
-            {
-                data = await request.ReadFromJsonAsync<PasswordHasherRequest>(executionContext.CancellationToken)
-                    ?? throw requiredException;
-            }
+
+            var data = inputResponse.Result;
 
             var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
                 ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
