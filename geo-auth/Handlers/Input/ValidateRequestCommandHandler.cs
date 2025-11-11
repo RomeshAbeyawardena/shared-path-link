@@ -3,6 +3,7 @@ using GeoAuth.Shared.Requests.Input;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace geo_auth.Handlers.Input
 {
@@ -31,7 +32,15 @@ namespace geo_auth.Handlers.Input
 
                 if (!acceptedEncodings.Any(request.AcceptableEncodings.Contains))
                 {
-                    throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
+                    var helpText = new StringBuilder();
+
+                    foreach (var acceptEncoding in request.AcceptableEncodings)
+                    {
+                        helpText.AppendLine($"'Accept-Encoding': '{acceptEncoding.ToLower()}'");
+                    }
+
+                    throw new ResponseException($"An acceptable encoding type was not specified. Include one of these headers {helpText} in your request.", 
+                        StatusCodes.Status422UnprocessableEntity);
                 }
 
 
