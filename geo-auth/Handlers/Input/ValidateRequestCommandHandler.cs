@@ -2,11 +2,12 @@
 using GeoAuth.Shared.Requests.Input;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace geo_auth.Handlers.Input
 {
-    internal class ValidateRequestCommandHandler(IHttpContextAccessor contextAccessor) : IRequestHandler<ValidateRequestCommand, PasswordHasherRequestResult>
+    internal class ValidateRequestCommandHandler(IHttpContextAccessor contextAccessor, 
+        ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, PasswordHasherRequestResult>
     {
         public async Task<PasswordHasherRequestResult> Handle(ValidateRequestCommand request, CancellationToken cancellationToken)
         {
@@ -37,6 +38,7 @@ namespace geo_auth.Handlers.Input
             }
             catch (Exception exception)
             {
+                logger.LogError(exception, "Unable to validate request");
                 return new PasswordHasherRequestResult(default, exception);
             }
         }

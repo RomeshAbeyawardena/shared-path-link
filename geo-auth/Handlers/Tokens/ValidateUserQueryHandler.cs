@@ -3,6 +3,7 @@ using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +12,8 @@ using System.Security.Claims;
 
 namespace geo_auth.Handlers.Tokens;
 
-internal class ValidateUserQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions) : IRequestHandler<ValidateUserQuery, UserResult>
+internal class ValidateUserQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions,
+    ILogger<ValidateUserQueryHandler> logger) : IRequestHandler<ValidateUserQuery, UserResult>
 {
     public async Task<UserResult> Handle(ValidateUserQuery request, CancellationToken cancellationToken)
     {
@@ -79,6 +81,7 @@ internal class ValidateUserQueryHandler(IOptions<TokenConfiguration> tokenConfig
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Unable to validate user token");
             return new UserResult(null, ex);
         }
     }
