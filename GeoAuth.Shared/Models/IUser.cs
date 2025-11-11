@@ -1,6 +1,6 @@
 ﻿namespace GeoAuth.Shared.Models;
 
-public interface IUser
+public interface IUser : IMappable<IUser>
 {
     Guid? Id { get; set; }
     Guid? ClientId { get; set; }
