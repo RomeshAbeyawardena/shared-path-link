@@ -14,7 +14,7 @@ namespace geo_auth;
 
 public static class Endpoints
 {
-    public static void ThrowApproriateExceptionOnFailure<T>(IResult<T> result)
+    public static void EnsureSuccessOrThrow<T>(IResult<T> result)
     {
         if (!result.IsSuccess)
         {
@@ -43,21 +43,21 @@ public static class Endpoints
                 AcceptableEncodings = acceptableEncodings,
                 HttpContext = request.HttpContext }, cancellationToken);
 
-            ThrowApproriateExceptionOnFailure(inputResponse);
+            EnsureSuccessOrThrow(inputResponse);
 
             var data = inputResponse.Result;
 
             var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
                 ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
 
-            ThrowApproriateExceptionOnFailure(userDataResponse);
+            EnsureSuccessOrThrow(userDataResponse);
 
             var user = userDataResponse.Result
                 ?? throw new ResponseException("User result object is unexpectedly null", StatusCodes.Status500InternalServerError);
 
             var hasherResponse = await mediator.Send(new GeneratePasswordHashCommand(user), cancellationToken);
 
-            ThrowApproriateExceptionOnFailure(hasherResponse);
+            EnsureSuccessOrThrow(hasherResponse);
 
             return new PasswordHashResponse(hasherResponse.Result
                 ?? throw new ResponseException("Hasher result object is unexpectedly null", StatusCodes.Status500InternalServerError), automationId);
