@@ -12,6 +12,7 @@ builder.ConfigureFunctionsWebApplication();
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights()
+    .ConfigureOptions(builder.Configuration)
     .RegisterHandlers();
 
 builder

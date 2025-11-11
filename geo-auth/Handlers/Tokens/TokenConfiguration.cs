@@ -1,6 +1,9 @@
 ﻿namespace geo_auth.Handlers.Tokens;
 
-public record TokenConfiguration(string? ValidAudience,
-    string? ValidIssuer,
-    string? SigningKeyId,
-    string? SigningKey);
+public record TokenConfiguration
+{
+    public string? ValidAudience { get; init; }
+    public string? ValidIssuer { get; init; }
+    public string? SigningKeyId { get; init; }
+    public string? SigningKey { get; init; }
+};

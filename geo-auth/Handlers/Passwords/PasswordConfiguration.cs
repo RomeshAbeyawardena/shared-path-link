@@ -1,8 +1,11 @@
 ﻿namespace geo_auth.Handlers.Passwords;
 
-internal record PasswordConfiguration(string KnownSecret, 
-    int? DegreeOfParallelism,
-    int? MemorySize,
-    int? Iterations,
-    int? KeySize,
-    int? SaltSize);
+internal record PasswordConfiguration
+{
+    public string? KnownSecret { get; init; }
+    public int? DegreeOfParallelism { get; init; }
+    public int? MemorySize { get; init; }
+    public int? Iterations { get; init; }
+    public int? KeySize { get; init; }
+    public int? SaltSize { get; init; }
+};
