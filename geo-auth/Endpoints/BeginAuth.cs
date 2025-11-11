@@ -1,4 +1,5 @@
-﻿using geo_auth.Models;
+﻿using geo_auth.Handlers.Tokens;
+using geo_auth.Models;
 using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Requests.Input;
@@ -7,34 +8,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json.Serialization;
 
 namespace geo_auth;
-
-internal interface IAuthTokenResult
-{
-    string? Token { get; }
-}
-
-internal record AuthTokenResponse : MappableStandardResponse<IAuthTokenResult, AuthTokenResponse>, IAuthTokenResult
-{
-    protected override IAuthTokenResult Source => this;
-    protected override AuthTokenResponse? Result => this;
-
-    public AuthTokenResponse(IAuthTokenResult response, Guid? automationId)
-        : base(response, automationId)
-    {
-        
-    }
-
-    [JsonIgnore]
-    public string? Token { get; private set; }
-
-    public override void Map(IAuthTokenResult source)
-    {
-        Token = source.Token;
-    }
-}
 
 public static partial class Endpoints
 {
