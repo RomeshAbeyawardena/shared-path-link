@@ -25,69 +25,6 @@ public static class Endpoints
         return salt;
     }
 
-
-    public static async Task<User> ProcessTokenAsync(IConfiguration configuration, PasswordSalterRequest request, CancellationToken cancellationToken)
-    {
-        //TODO!
-        var signingKey = configuration["SigningKey"] ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
-        var key = new SymmetricSecurityKey(Convert.FromBase64String(signingKey))
-        {
-            KeyId = configuration["SigningKeyId"] ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
-        };
-
-        var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            ValidAudience = configuration["ValidAudience"],
-            ValidateIssuer = true,
-            ValidIssuer = configuration["ValidIssuer"],
-            ValidateIssuerSigningKey = true,
-            ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
-            IssuerSigningKey = key,
-            //ValidateTokenReplay = true
-        });
-
-        var user = new User();
-
-        if (!token.IsValid)
-        {
-            IdentityModelEventSource.ShowPII = true;
-            throw new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable, token.Exception);
-        }
-
-        if (token.Claims.TryGetValue("clientId", out var clientId) && Guid.TryParse(clientId?.ToString(), out var cid))
-        {
-            user.ClientId = cid;
-        }
-
-        if (token.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var sub) && Guid.TryParse(sub?.ToString(), out var sid))
-        {
-            user.Id = sid;
-        }
-
-        if (token.Claims.TryGetValue(ClaimTypes.Email, out var email))
-        {
-            user.Email = email?.ToString();
-        }
-
-        if (token.Claims.TryGetValue("name", out var name))
-        {
-            user.Name = name?.ToString();
-        }
-
-        if (token.Claims.TryGetValue("secret", out var secret))
-        {
-            user.Secret = secret?.ToString();
-        }
-
-        if (token.Claims.TryGetValue("salt", out var salt))
-        {
-            user.Salt = salt?.ToString();
-        }
-
-        return user;
-    }
-
     [Function("hasher")]
     public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request,
         FunctionContext executionContext)
@@ -130,14 +67,26 @@ public static class Endpoints
                     ?? throw requiredException;
             }
 
-            var userData = await mediator.Send(new ValidateUserQuery(data?.Token 
-                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest));
+            var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
+                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)));
 
-            var configuration = request.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+            if (!userDataResponse.IsSuccess)
+            {
+                if (userDataResponse.Exception is not null)
+                {
+                    if (userDataResponse.Exception is ResponseException responseException)
+                    {
+                        throw responseException;
+                    }
 
-            var user = await ProcessTokenAsync(configuration,
-                data ?? throw requiredException, executionContext.CancellationToken)
-                ?? throw new ResponseException("Unable to validate token", StatusCodes.Status400BadRequest);
+                    throw new ResponseException(userDataResponse.Exception, StatusCodes.Status400BadRequest);
+                }
+
+                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
+            }
+
+            var user = userDataResponse.Result
+                ?? throw new ResponseException("User object is unexpectedly null", StatusCodes.Status500InternalServerError);
 
             if (string.IsNullOrWhiteSpace(user.Salt))
             {

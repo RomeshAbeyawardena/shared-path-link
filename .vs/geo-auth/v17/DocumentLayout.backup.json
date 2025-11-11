@@ -3,28 +3,56 @@
   "WorkspaceRootPath": "C:\\dev\\shared-pathlink\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\requests\\passwords\\generatepasswordhashcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\requests\\passwords\\generatepasswordhashcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\endpoints\\endpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\responseexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\handlers\\tokens\\validateuserqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\handlers\\tokens\\validateuserqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\standarderrorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\requests\\tokens\\validateuserquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\requests\\tokens\\validateuserquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\standardresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\standardresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\models\\iuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\models\\iuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\models\\records\\mappablebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\models\\records\\mappablebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\models\\passwordsalterrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\models\\passwordsalterrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|c:\\dev\\shared-pathlink\\geo-auth\\geo-auth.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9FCB9233-FD49-D194-D273-B10A787EAC8B}|geo-auth\\geo-auth.csproj|solutionrelative:geo-auth\\geo-auth.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\models\\iresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\models\\iresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\geoauth.shared.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\geoauth.shared.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|c:\\dev\\shared-pathlink\\geoauth.shared\\servicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF768286-7D56-4AD9-92C4-29036021BC7F}|GeoAuth.Shared\\GeoAuth.Shared.csproj|solutionrelative:geoauth.shared\\servicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +62,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,79 +70,171 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ResponseException.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\ResponseException.cs",
-              "RelativeDocumentMoniker": "geo-auth\\Models\\ResponseException.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\ResponseException.cs",
-              "RelativeToolTip": "geo-auth\\Models\\ResponseException.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABeAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "GeneratePasswordHashCommand.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Requests\\Passwords\\GeneratePasswordHashCommand.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Requests\\Passwords\\GeneratePasswordHashCommand.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Requests\\Passwords\\GeneratePasswordHashCommand.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Requests\\Passwords\\GeneratePasswordHashCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T13:57:55.297Z",
+              "WhenOpened": "2025-11-11T08:49:23.27Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "StandardErrorResponse.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardErrorResponse.cs",
-              "RelativeDocumentMoniker": "geo-auth\\Models\\StandardErrorResponse.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardErrorResponse.cs",
-              "RelativeToolTip": "geo-auth\\Models\\StandardErrorResponse.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAADgvx8AAAAAAAAAAAAAAA==",
+              "Title": "ValidateUserQueryHandler.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Handlers\\Tokens\\ValidateUserQueryHandler.cs",
+              "RelativeDocumentMoniker": "geo-auth\\Handlers\\Tokens\\ValidateUserQueryHandler.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Handlers\\Tokens\\ValidateUserQueryHandler.cs",
+              "RelativeToolTip": "geo-auth\\Handlers\\Tokens\\ValidateUserQueryHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE8AAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T13:54:34.971Z",
+              "WhenOpened": "2025-11-11T08:44:30.099Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "StandardResponse.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardResponse.cs",
-              "RelativeDocumentMoniker": "geo-auth\\Models\\StandardResponse.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\StandardResponse.cs",
-              "RelativeToolTip": "geo-auth\\Models\\StandardResponse.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "IUser.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\IUser.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Models\\IUser.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\IUser.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Models\\IUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T13:12:56.076Z",
+              "WhenOpened": "2025-11-11T08:38:02.842Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Endpoints.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
-              "RelativeDocumentMoniker": "geo-auth\\Endpoints\\Endpoints.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
-              "RelativeToolTip": "geo-auth\\Endpoints\\Endpoints.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "MappableBase.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\Records\\MappableBase.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Models\\Records\\MappableBase.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\Records\\MappableBase.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Models\\Records\\MappableBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T12:53:32.18Z",
+              "WhenOpened": "2025-11-11T08:37:29.046Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PasswordSalterRequest.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\PasswordSalterRequest.cs",
+              "RelativeDocumentMoniker": "geo-auth\\Models\\PasswordSalterRequest.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\PasswordSalterRequest.cs",
+              "RelativeToolTip": "geo-auth\\Models\\PasswordSalterRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:31:49.459Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\User.cs",
+              "RelativeDocumentMoniker": "geo-auth\\Models\\User.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Models\\User.cs",
+              "RelativeToolTip": "geo-auth\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:29:59.827Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "geo-auth",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\geo-auth.csproj",
+              "RelativeDocumentMoniker": "geo-auth\\geo-auth.csproj",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\geo-auth.csproj",
+              "RelativeToolTip": "geo-auth\\geo-auth.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-11T08:27:36.611Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IResult.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\IResult.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Models\\IResult.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\IResult.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Models\\IResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:21:17.859Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "geo-auth\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Properties\\launchSettings.json",
-              "RelativeToolTip": "geo-auth\\Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-10T13:01:12.165Z"
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\User.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Models\\User.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Models\\User.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:20:54.786Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Program.cs",
-              "RelativeDocumentMoniker": "geo-auth\\Program.cs",
-              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Program.cs",
-              "RelativeToolTip": "geo-auth\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "ValidateUserQuery.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Requests\\Tokens\\ValidateUserQuery.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\Requests\\Tokens\\ValidateUserQuery.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\Requests\\Tokens\\ValidateUserQuery.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\Requests\\Tokens\\ValidateUserQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T12:48:48.948Z",
+              "WhenOpened": "2025-11-11T08:17:03.22Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Endpoints.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
+              "RelativeDocumentMoniker": "geo-auth\\Endpoints\\Endpoints.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\geo-auth\\Endpoints\\Endpoints.cs",
+              "RelativeToolTip": "geo-auth\\Endpoints\\Endpoints.cs",
+              "ViewState": "AgIAAFIAAAAAAAAAAAAAAFoAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:16:12.44Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "GeoAuth.Shared",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\GeoAuth.Shared.csproj",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\GeoAuth.Shared.csproj",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\GeoAuth.Shared.csproj",
+              "RelativeToolTip": "GeoAuth.Shared\\GeoAuth.Shared.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-11T08:12:20.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ServiceCollectionExtensions.cs",
+              "DocumentMoniker": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\ServiceCollectionExtensions.cs",
+              "RelativeDocumentMoniker": "GeoAuth.Shared\\ServiceCollectionExtensions.cs",
+              "ToolTip": "C:\\dev\\shared-pathlink\\GeoAuth.Shared\\ServiceCollectionExtensions.cs",
+              "RelativeToolTip": "GeoAuth.Shared\\ServiceCollectionExtensions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T08:11:31.301Z",
               "EditorCaption": ""
             }
           ]
