@@ -20,6 +20,12 @@ namespace geo_auth.Handlers.Input
                     throw new ResponseException("Sensitive parameters should not be passed in the URL of a public method. If using a JWT token, safely encode it and include the header 'Accept-Encoding: jwt'. Supply the token as a 'token' field in the request body or as form data to ensure secure transmission.", StatusCodes.Status400BadRequest);
                 }
 
+                if (!context.Request.IsHttps)
+                {
+                    var caller = context.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? context.Connection.RemoteIpAddress?.ToString();
+                    logger.LogWarning("Insecure channel from {Caller}. Avoid transmitting PII. Consider encrypting JWT before sending it.", caller);
+                }
+                
                 var acceptedEncodings = context.Request.Headers.AcceptEncoding.Where(x => !string.IsNullOrWhiteSpace(x))
                     .SelectMany(x => x!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 
@@ -46,8 +52,8 @@ namespace geo_auth.Handlers.Input
                         ?? throw requiredException;
                 }
 
-                return new PasswordHasherRequestResult(data 
-                    ?? throw new ResponseException("Unexpected error: input payload unavailable", StatusCodes.Status500InternalServerError));
+                return new PasswordHasherRequestResult(data
+                        ?? throw new ResponseException("Unexpected error: input payload unavailable", StatusCodes.Status500InternalServerError));
             }
             catch (Exception exception)
             {
