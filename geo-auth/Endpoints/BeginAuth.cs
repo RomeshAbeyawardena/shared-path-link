@@ -18,6 +18,7 @@ public static partial class Endpoints
     public static async Task <IResult> BeginAuth(
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
         [BlobInput("geo-auth/config.json", Connection = "AzureWebJobsStorage")] Stream content,
+        [QueueOutput("update-config", Connection = "AzureWebJobsStorage")] string value,
         FunctionContext executionContext)
     {
         Guid? automationId = GetAutomationId(request.Headers);
