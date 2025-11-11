@@ -8,13 +8,27 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace geo_auth;
 
+internal record MachineData
+{
+    public Guid MachineId { get; set; }
+    public string? Secret { get; set; }
+}
+
+internal record BlobConfiguration
+{
+    public IEnumerable<MachineData> Machines { get; set; } = [];
+}
+
 public static partial class Endpoints
 {
-    [Function("auth")]
-    public static async Task <IResult> BeginAuth([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
+    [Function("begin-auth")]
+    public static async Task <IResult> BeginAuth(
+        [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
+        [BlobInput("geo-auth/config.json", Connection = "AzureWebJobsStorage")] Stream content,
         FunctionContext executionContext)
     {
         Guid? automationId = GetAutomationId(request.Headers);
@@ -26,7 +40,14 @@ public static partial class Endpoints
 
         try
         {
-            var validateRequestResult = await mediator.Send(new ValidateRequestCommand(), cancellationToken);
+            var jsonOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var configuration = JsonSerializer.Deserialize<BlobConfiguration>(content, jsonOptions);
+
+            var validateRequestResult = await mediator.Send(new ValidateRequestCommand() { HttpContext = request.HttpContext }, cancellationToken);
 
             validateRequestResult.EnsureSuccessOrThrow();
 
@@ -36,6 +57,8 @@ public static partial class Endpoints
             machineTokenQueryResult.EnsureSuccessOrThrow();
 
             return new AuthTokenResponse(null!, automationId);
+
+            
         }
         catch (ResponseException ex)
         {
