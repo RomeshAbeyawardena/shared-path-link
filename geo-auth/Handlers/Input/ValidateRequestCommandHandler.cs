@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace geo_auth.Handlers.Input
 {
-    internal class ValidateRequestCommandHandler(ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, PasswordHasherRequestResult>
+    internal class ValidateRequestCommandHandler(ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, ValidateRequestResult>
     {
-        public async Task<PasswordHasherRequestResult> Handle(ValidateRequestCommand request, CancellationToken cancellationToken)
+        public async Task<ValidateRequestResult> Handle(ValidateRequestCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace geo_auth.Handlers.Input
                 }
 
 
-                PasswordHasherRequest? data = null;
+                ValidateRequest? data = null;
                 var requiredException = new ResponseException("Token is a required field", StatusCodes.Status400BadRequest);
                 if (context.Request.HasFormContentType)
                 {
@@ -44,21 +44,21 @@ namespace geo_auth.Handlers.Input
                         throw requiredException;
                     }
 
-                    data = new PasswordHasherRequest { Token = token };
+                    data = new ValidateRequest { Token = token };
                 }
                 else if (context.Request.HasJsonContentType())
                 {
-                    data = await context.Request.ReadFromJsonAsync<PasswordHasherRequest>(cancellationToken)
+                    data = await context.Request.ReadFromJsonAsync<ValidateRequest>(cancellationToken)
                         ?? throw requiredException;
                 }
 
-                return new PasswordHasherRequestResult(data
+                return new ValidateRequestResult(data
                         ?? throw new ResponseException("Unexpected error: input payload unavailable", StatusCodes.Status500InternalServerError));
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Unable to validate request");
-                return new PasswordHasherRequestResult(default, exception);
+                return new ValidateRequestResult(default, exception);
             }
         }
     }

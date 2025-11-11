@@ -9,15 +9,16 @@ internal record PasswordHashResponse : MappableStandardResponse<IPasswordHash, P
     protected override IPasswordHash Source => this;
     protected override PasswordHashResponse? Result => this;
 
-    [JsonIgnore]
-    public string Hash { get; set; } = null!;
-    
-    [JsonIgnore]
-    public string? Salt { get; set; }
-
-    public PasswordHashResponse(IPasswordHash passwordHash, Guid? automationId) : base(passwordHash, automationId)
+    public PasswordHashResponse(IPasswordHash passwordHash, Guid? automationId) 
+        : base(passwordHash, automationId)
     {
     }
+
+    [JsonIgnore]
+    public string Hash { get; private set; } = null!;
+    
+    [JsonIgnore]
+    public string? Salt { get; private set; }
 
     public override void Map(IPasswordHash source)
     {
