@@ -1,5 +1,6 @@
 ﻿using geo_auth.Handlers.Passwords;
 using geo_auth.Models;
+using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Requests.Input;
 using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
@@ -13,6 +14,19 @@ namespace geo_auth;
 
 public static class Endpoints
 {
+    public static void ThrowApproriateExceptionOnFailure<T>(IResult<T> result)
+    {
+        if (!result.IsSuccess)
+        {
+            if (result.Exception is not null)
+            {
+                throw ResponseException.Transform(result.Exception);
+            }
+
+            throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
+        }
+    }
+
     [Function("hasher")]
     public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request,
         FunctionContext executionContext)
@@ -28,46 +42,22 @@ public static class Endpoints
             var inputResponse = await mediator.Send(new ValidateRequestCommand { 
                 AcceptableEncodings = acceptableEncodings,
                 HttpContext = request.HttpContext }, cancellationToken);
-            
-            if (!inputResponse.IsSuccess)
-            {
-                if (inputResponse.Exception is not null)
-                {
-                    throw ResponseException.Transform(inputResponse.Exception);
-                }
 
-                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
-            }
+            ThrowApproriateExceptionOnFailure(inputResponse);
 
             var data = inputResponse.Result;
 
             var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
                 ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
 
-            if (!userDataResponse.IsSuccess)
-            {
-                if (userDataResponse.Exception is not null)
-                {
-                    throw ResponseException.Transform(userDataResponse.Exception);
-                }
-
-                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
-            }
+            ThrowApproriateExceptionOnFailure(userDataResponse);
 
             var user = userDataResponse.Result
                 ?? throw new ResponseException("User result object is unexpectedly null", StatusCodes.Status500InternalServerError);
 
             var hasherResponse = await mediator.Send(new GeneratePasswordHashCommand(user), cancellationToken);
 
-            if (!hasherResponse.IsSuccess)
-            {
-                if (hasherResponse.Exception is not null)
-                {
-                    throw ResponseException.Transform(hasherResponse.Exception);
-                }
-
-                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
-            }
+            ThrowApproriateExceptionOnFailure(hasherResponse);
 
             return new PasswordHashResponse(hasherResponse.Result
                 ?? throw new ResponseException("Hasher result object is unexpectedly null", StatusCodes.Status500InternalServerError), automationId);

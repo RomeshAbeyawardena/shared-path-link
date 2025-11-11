@@ -3,7 +3,7 @@ using geo_auth.Handlers.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GeoAuth.Shared;
+namespace geo_auth.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -15,9 +15,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<PasswordConfiguration>()
-            .Bind(configuration.GetSection("password"));
+            .Bind(configuration.GetSection("password"))
+            .ValidateOnStart();
+
         services.AddOptions<TokenConfiguration>()
-            .Bind(configuration.GetSection("token"));
+            .Bind(configuration.GetSection("token"))
+            .ValidateOnStart();
         return services;
     }
 }
