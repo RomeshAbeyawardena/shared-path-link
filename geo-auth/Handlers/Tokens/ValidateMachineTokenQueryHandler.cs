@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -35,7 +36,28 @@ internal class ValidateMachineTokenQueryHandler(IOptions<TokenConfiguration> tok
                 //ValidateTokenReplay = true
             });
 
-            return new MachineTokenQueryResult(new MachineTokenQueryResponse());
+            var failureException = new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable, token.Exception); ;
+
+            if (!token.IsValid)
+            {
+            #if DEBUG
+                IdentityModelEventSource.ShowPII = true;
+#endif
+                throw failureException;
+            }
+
+            if (!token.Claims.TryGetValue("machine-id", out var machineId))
+            {
+                throw failureException;
+            }
+
+            if (!token.Claims.TryGetValue("secret", out var secret))
+            {
+                throw failureException;
+            }
+
+            return new MachineTokenQueryResult(
+                new MachineTokenQueryResponse(machineId?.ToString(), secret?.ToString()));
         }
         catch (Exception ex)
         {
