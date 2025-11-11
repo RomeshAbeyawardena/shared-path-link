@@ -39,11 +39,13 @@ internal class ValidateUserQueryHandler(IOptions<TokenConfiguration> tokenConfig
                 //ValidateTokenReplay = true
             });
 
-            var user = new GeoAuth.Shared.Models.User();
+            var user = new User();
 
             if (!token.IsValid)
             {
+#if DEBUG
                 IdentityModelEventSource.ShowPII = true;
+#endif
                 throw new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable, token.Exception);
             }
 
