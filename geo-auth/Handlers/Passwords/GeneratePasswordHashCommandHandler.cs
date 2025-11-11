@@ -31,7 +31,7 @@ internal class GeneratePasswordHashCommandHandler(IConfiguration configuration)
         var hashedPassword = new Argon2id(Encoding.UTF8.GetBytes(user.Secret
             ?? throw new ResponseException("Secret must not be empty", StatusCodes.Status400BadRequest)))
         {
-            KnownSecret = Encoding.UTF8.GetBytes(configuration["KnownSecret"]
+            KnownSecret = Convert.FromBase64String(configuration["KnownSecret"]
                 ?? throw new ResponseException("KnownSecret is empty", StatusCodes.Status500InternalServerError)),
             Salt = Convert.FromBase64String(user.Salt),
             DegreeOfParallelism = 4,

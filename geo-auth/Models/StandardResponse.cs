@@ -1,7 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GeoAuth.Shared.Models;
+using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
 namespace geo_auth.Models;
+
+internal abstract record MappableStandardResponse<TContract, T> : StandardResponse<TContract, T>, IMappable<TContract>
+    where T : TContract
+{
+    protected abstract TContract Source { get; }
+
+    protected MappableStandardResponse(TContract contract, Guid? automationId)
+        : base(automationId)
+    {
+        Map(contract);
+    }
+
+    public TResult Map<TResult>(Func<TResult>? instanceFactory = null) where TResult : IMappable<TContract>
+    {
+        var result = instanceFactory is null
+            ? Activator.CreateInstance<TResult>()
+            : instanceFactory();
+        result.Map(Source);
+        return result;
+    }
+
+    public abstract void Map(TContract source);
+}
+
 
 internal abstract record StandardResponse<TContract, T> : StandardResponse<T>
     where T : TContract

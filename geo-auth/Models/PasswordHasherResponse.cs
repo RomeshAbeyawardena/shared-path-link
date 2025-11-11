@@ -1,17 +1,27 @@
 ﻿using GeoAuth.Shared.Requests.Passwords;
+using System.Text.Json.Serialization;
 
 namespace geo_auth.Models;
 
-internal record PasswordHasherResponse : StandardResponse<IPasswordHash, PasswordHash>
+internal record PasswordHashResponse : MappableStandardResponse<IPasswordHash, PasswordHashResponse>, IPasswordHash
 {
-    protected override PasswordHash? Result { get; }
-    public PasswordHasherResponse(PasswordHash result)
+    protected override IPasswordHash Source => this;
+    protected override PasswordHashResponse? Result => this;
+
+    [JsonIgnore]
+    public string Hash { get; set; } = null!;
+    
+    [JsonIgnore]
+    public string? Salt { get; set; }
+
+    public PasswordHashResponse(IPasswordHash passwordHash, Guid? automationId) : base(passwordHash, automationId)
     {
-        Result = result;
     }
 
-    public PasswordHasherResponse(PasswordHash result, Guid? automationId) : base(automationId)
+    public override void Map(IPasswordHash source)
     {
-        Result = result;
+        Hash = source.Hash;
+        Salt = source.Salt;
     }
+
 }

@@ -81,7 +81,7 @@ public static class Endpoints
                 throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
             }
 
-            return new PasswordHasherResponse(hasherResponse.Result
+            return new PasswordHashResponse(hasherResponse.Result
                 ?? throw new ResponseException("Hasher result object is unexpectedly null", StatusCodes.Status500InternalServerError), automationId);
         }
         catch (ResponseException ex)
