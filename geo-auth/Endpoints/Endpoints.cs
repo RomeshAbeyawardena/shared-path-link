@@ -1,5 +1,7 @@
 ﻿using geo_auth.Models;
+using GeoAuth.Shared.Requests.Tokens;
 using Konscious.Security.Cryptography;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -93,6 +95,9 @@ public static class Endpoints
         string[] acceptableEncodings = ["jwt"];
         Guid? automationId = request.Headers.TryGetValue("automation-id", out var automationIdValue)
             && Guid.TryParse(automationIdValue, out var id) ? id : null;
+
+        var mediator = request.HttpContext.RequestServices.GetRequiredService<IMediator>();
+
         try
         {
             if (request.QueryString.HasValue)
@@ -124,6 +129,9 @@ public static class Endpoints
                 data = await request.ReadFromJsonAsync<PasswordSalterRequest>(executionContext.CancellationToken)
                     ?? throw requiredException;
             }
+
+            var userData = await mediator.Send(new ValidateUserQuery(data?.Token 
+                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest));
 
             var configuration = request.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
 
