@@ -3,7 +3,7 @@ using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,24 +11,26 @@ using System.Security.Claims;
 
 namespace geo_auth.Handlers.Tokens;
 
-internal class ValidateUserQueryHandler(IConfiguration configuration) : IRequestHandler<ValidateUserQuery, UserResult>
+internal class ValidateUserQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions) : IRequestHandler<ValidateUserQuery, UserResult>
 {
     public async Task<UserResult> Handle(ValidateUserQuery request, CancellationToken cancellationToken)
     {
+        var tokenConfiguration = tokenConfigurationOptions.Value;
+
         try
         {
-            var signingKey = configuration["SigningKey"] ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
+            var signingKey = tokenConfiguration.SigningKey ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
             var key = new SymmetricSecurityKey(Convert.FromBase64String(signingKey))
             {
-                KeyId = configuration["SigningKeyId"] ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
+                KeyId = tokenConfiguration.SigningKeyId ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
             };
 
             var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
             {
                 ValidateAudience = true,
-                ValidAudience = configuration["ValidAudience"],
+                ValidAudience = tokenConfiguration.ValidAudience,
                 ValidateIssuer = true,
-                ValidIssuer = configuration["ValidIssuer"],
+                ValidIssuer = tokenConfiguration.ValidIssuer,
                 ValidateIssuerSigningKey = true,
                 ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
                 IssuerSigningKey = key,

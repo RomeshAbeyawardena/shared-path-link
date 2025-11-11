@@ -1,4 +1,5 @@
-﻿using geo_auth.Models;
+﻿using geo_auth.Handlers.Passwords;
+using geo_auth.Models;
 using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;

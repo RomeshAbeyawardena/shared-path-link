@@ -1,7 +1,8 @@
-﻿using GeoAuth.Shared.Requests.Passwords;
+﻿using geo_auth.Models;
+using GeoAuth.Shared.Requests.Passwords;
 using System.Text.Json.Serialization;
 
-namespace geo_auth.Models;
+namespace geo_auth.Handlers.Passwords;
 
 internal record PasswordHashResponse : MappableStandardResponse<IPasswordHash, PasswordHashResponse>, IPasswordHash
 {

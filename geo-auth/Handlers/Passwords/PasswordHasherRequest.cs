@@ -1,4 +1,4 @@
-﻿namespace geo_auth.Models;
+﻿namespace geo_auth.Handlers.Passwords;
 
 public record PasswordHasherRequest
 {
