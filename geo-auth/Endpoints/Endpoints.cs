@@ -1,30 +1,16 @@
 ﻿using geo_auth.Models;
+using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
-using Konscious.Security.Cryptography;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
+
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace geo_auth;
 
 public static class Endpoints
 {
-    public static byte[] GenerateSalt(int size = 16)
-    {
-        var salt = new byte[size];
-        RandomNumberGenerator.Fill(salt);
-        return salt;
-    }
-
     [Function("hasher")]
     public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request,
         FunctionContext executionContext)
@@ -34,7 +20,7 @@ public static class Endpoints
             && Guid.TryParse(automationIdValue, out var id) ? id : null;
 
         var mediator = request.HttpContext.RequestServices.GetRequiredService<IMediator>();
-
+        var cancellationToken = executionContext.CancellationToken;
         try
         {
             if (request.QueryString.HasValue)
@@ -50,7 +36,7 @@ public static class Endpoints
                 throw new ResponseException("An acceptable content type was not specified. Include the header 'Accept-Encoding: jwt' in your request.", StatusCodes.Status422UnprocessableEntity);
             }
 
-            PasswordSalterRequest? data = null;
+            PasswordHasherRequest? data = null;
             var requiredException = new ResponseException("Token is a required field", StatusCodes.Status400BadRequest);
             if (request.HasFormContentType)
             {
@@ -59,56 +45,44 @@ public static class Endpoints
                     throw requiredException;
                 }
 
-                data = new PasswordSalterRequest { Token = token };
+                data = new PasswordHasherRequest { Token = token };
             }
             else if (request.HasJsonContentType())
             {
-                data = await request.ReadFromJsonAsync<PasswordSalterRequest>(executionContext.CancellationToken)
+                data = await request.ReadFromJsonAsync<PasswordHasherRequest>(executionContext.CancellationToken)
                     ?? throw requiredException;
             }
 
             var userDataResponse = await mediator.Send(new ValidateUserQuery(data?.Token 
-                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)));
+                ?? throw new ResponseException("Token is a required field", StatusCodes.Status400BadRequest)), cancellationToken);
 
             if (!userDataResponse.IsSuccess)
             {
                 if (userDataResponse.Exception is not null)
                 {
-                    if (userDataResponse.Exception is ResponseException responseException)
-                    {
-                        throw responseException;
-                    }
-
-                    throw new ResponseException(userDataResponse.Exception, StatusCodes.Status400BadRequest);
+                    throw ResponseException.Transform(userDataResponse.Exception);
                 }
 
                 throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
             }
 
             var user = userDataResponse.Result
-                ?? throw new ResponseException("User object is unexpectedly null", StatusCodes.Status500InternalServerError);
+                ?? throw new ResponseException("User result object is unexpectedly null", StatusCodes.Status500InternalServerError);
 
-            if (string.IsNullOrWhiteSpace(user.Salt))
+            var hasherResponse = await mediator.Send(new GeneratePasswordHashCommand(user), cancellationToken);
+
+            if (!hasherResponse.IsSuccess)
             {
-                user.Salt = Convert.ToBase64String(GenerateSalt());
+                if (hasherResponse.Exception is not null)
+                {
+                    throw ResponseException.Transform(hasherResponse.Exception);
+                }
+
+                throw new ResponseException("An unexpected error occurred", StatusCodes.Status500InternalServerError);
             }
 
-            var hashedPassword = new Argon2id(Encoding.UTF8.GetBytes(user.Secret
-                ?? throw new ResponseException("Secret must not be empty", StatusCodes.Status400BadRequest)))
-            {
-                KnownSecret = Encoding.UTF8.GetBytes(configuration["KnownSecret"] 
-                    ?? throw new ResponseException("KnownSecret is empty", StatusCodes.Status500InternalServerError)),
-                Salt = Convert.FromBase64String(user.Salt),
-                DegreeOfParallelism = 4,
-                MemorySize = 65536,
-                Iterations = 4
-            }.GetBytes(32);
-
-            return new PasswordSalterResponse(automationId)
-            {
-                Hash = Convert.ToBase64String(hashedPassword),
-                Salt = user.Salt
-            };
+            return new PasswordHasherResponse(hasherResponse.Result
+                ?? throw new ResponseException("Hasher result object is unexpectedly null", StatusCodes.Status500InternalServerError), automationId);
         }
         catch (ResponseException ex)
         {
