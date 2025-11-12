@@ -21,7 +21,7 @@ public record MachineDataAccessToken : MappableBase<IMachineAccessToken>, IMachi
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset Expires { get; set; }
     public required string PartitionKey { get; set; }
-    public required string RowKey { get; set; }
+    public string RowKey { get; set; } = default!;
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
 

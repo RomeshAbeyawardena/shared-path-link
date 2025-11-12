@@ -13,11 +13,7 @@ public partial class Queues(IMediator mediator, JsonSerializerOptions jsonSerial
         [QueueTrigger("machine-access-token", Connection = "AzureWebJobsStorage")] string data,
         FunctionContext executionContext)
     {
-        using var memoryStream = new MemoryStream();
-        using var textWriter = new StreamWriter(memoryStream);
-        textWriter.WriteLine(data);
-        memoryStream.Position = 0;
-        var machineDataAccess = await JsonSerializer.DeserializeAsync<MachineDataAccessToken>(memoryStream, jsonSerializerOptions, executionContext.CancellationToken);
+        var machineDataAccess = JsonSerializer.Deserialize<MachineDataAccessToken>(data, options: jsonSerializerOptions);
 
         if (machineDataAccess is null)
         {

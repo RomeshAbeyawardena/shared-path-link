@@ -43,7 +43,10 @@ public static class ServiceCollectionExtensions
             var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
                 .Value;
 
-            var queueClient = new Azure.Storage.Queues.QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName);
+            var queueClient = new QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName, new QueueClientOptions
+            {
+                MessageEncoding = QueueMessageEncoding.Base64
+            });
             queueClient.CreateIfNotExists();
             return queueClient;
         })

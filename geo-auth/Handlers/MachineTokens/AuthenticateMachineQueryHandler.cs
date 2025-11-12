@@ -30,18 +30,17 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
         };
         var utcNow = timeProvider.GetUtcNow();
 
-        var descriptor = new SecurityTokenDescriptor()
-        {
-            Issuer = tokenConfiguration.ValidAudience,
-            Audience = tokenConfiguration.ValidAudience,
-            Claims =
+        var descriptor = new SecurityTokenDescriptor();
+
+        descriptor.Issuer = tokenConfiguration.ValidAudience;
+        descriptor.Audience = tokenConfiguration.ValidAudience;
+        descriptor.Claims = new Dictionary<string, object>
                 {
                     { "partition-key", request.PartitionKey },
                     { "row-key", request.RowKey }
-                },
-            Expires = utcNow.UtcDateTime,
-            SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-        };
+                };
+        descriptor.Expires = utcNow.UtcDateTime;
+        descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var handler = new JsonWebTokenHandler();
         return handler.CreateToken(descriptor);
