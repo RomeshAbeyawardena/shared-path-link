@@ -72,13 +72,14 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
         var utcNow = timeProvider.GetUtcNow();
 
         var newToken = GenerateToken(result, cancellationToken);
+        var tokenConfiguration = tokenConfigurationOptions.Value;
         var response = await machineAccessTokenTableClient.AddEntityAsync(new MachineDataAccessToken
         {
             PartitionKey = request.MachineId.GetValueOrDefault().ToString(),
             RowKey = Guid.NewGuid().ToString(),
             Token = newToken,
             ValidFrom = utcNow,
-            Expires = utcNow.AddHours(2),
+            Expires = utcNow.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
             Timestamp = utcNow,
             ETag = ETag.All
         }, cancellationToken);
