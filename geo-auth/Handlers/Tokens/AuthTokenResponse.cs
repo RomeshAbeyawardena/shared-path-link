@@ -3,6 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace geo_auth.Handlers.Tokens;
 
+public record AuthTokenResult(string? Token) : IAuthTokenResult
+{
+}
+
 internal record AuthTokenResponse : MappableStandardResponse<IAuthTokenResult, AuthTokenResponse>, IAuthTokenResult
 {
     protected override IAuthTokenResult Source => this;

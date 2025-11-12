@@ -31,7 +31,7 @@ public static partial class Endpoints
 
         try
         {
-            var configuration = JsonSerializer.Deserialize<RegisteredMachineConfiguration>(content, jsonOptions);
+            //var configuration = JsonSerializer.Deserialize<RegisteredMachineConfiguration>(content, jsonOptions);
 
             var validateRequestResult = await mediator.Send(new ValidateRequestCommand() { 
                 AcceptableEncodings = ["jwt"], 
@@ -44,20 +44,13 @@ public static partial class Endpoints
 
             machineTokenQueryResult.EnsureSuccessOrThrow();
 
-            //var isValid = configuration?.IsRegistered(machineTokenQueryResult.Result );
-
-            //if (!isValid.GetValueOrDefault()){
-            //  throw new ResponseException("Invalid request", StatusCodes.Status401Unauthorized);
-            //}
             var machineToken = machineTokenQueryResult.Result ??
               throw new ResponseException("Unexpected null object", StatusCodes.Status500InternalServerError);
 
             var machineTokenAuthenticationResult = await mediator.Send(new AuthenticateMachineQuery(machineToken.MachineId, machineToken.Secret));
             machineTokenAuthenticationResult.EnsureSuccessOrThrow();
             
-            return new AuthTokenResponse(null!, automationId);
-
-            
+            return new AuthTokenResponse(new AuthTokenResult(machineTokenAuthenticationResult.Result?.Token), automationId);
         }
         catch (ResponseException ex)
         {
