@@ -3,6 +3,7 @@ using geo_auth.Models;
 using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Requests.Input;
+using GeoAuth.Shared.Requests.MachineToken;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,6 @@ public static partial class Endpoints
     [Function("begin-auth")]
     public static async Task <IResult> BeginAuth(
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
-        [BlobInput("geo-auth/config.json", Connection = "AzureWebJobsStorage")] Stream content,
-        [QueueOutput("update-config", Connection = "AzureWebJobsStorage")] string value,
         FunctionContext executionContext)
     {
         Guid? automationId = GetAutomationId(request.Headers);
@@ -45,13 +44,17 @@ public static partial class Endpoints
 
             machineTokenQueryResult.EnsureSuccessOrThrow();
 
-            var isValid = configuration?.IsRegistered(machineTokenQueryResult.Result ??
-                throw new ResponseException("Unexpected null object", StatusCodes.Status500InternalServerError));
+            //var isValid = configuration?.IsRegistered(machineTokenQueryResult.Result );
 
-            if (!isValid.GetValueOrDefault()){
-                throw new ResponseException("Invalid request", StatusCodes.Status401Unauthorized);
-            }
+            //if (!isValid.GetValueOrDefault()){
+            //  throw new ResponseException("Invalid request", StatusCodes.Status401Unauthorized);
+            //}
+            var machineToken = machineTokenQueryResult.Result ??
+              throw new ResponseException("Unexpected null object", StatusCodes.Status500InternalServerError);
 
+            var machineTokenAuthenticationResult = await mediator.Send(new AuthenticateMachineQuery(machineToken.MachineId, machineToken.Secret));
+            machineTokenAuthenticationResult.EnsureSuccessOrThrow();
+            
             return new AuthTokenResponse(null!, automationId);
 
             
