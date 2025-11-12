@@ -18,6 +18,18 @@ public static class ServiceCollectionExtensions
             PropertyNameCaseInsensitive = true
         })
         .AddSingleton(TimeProvider.System)
+        .AddKeyedTransient("machine-access-token", (s, key) =>
+        {
+            var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
+                .Value;
+
+            var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
+                .Value;
+
+            var queueClient = new Azure.Storage.Queues.QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName);
+
+            return queueClient;
+        })
         .AddKeyedTransient("machine-token",(s, key) =>
         {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()

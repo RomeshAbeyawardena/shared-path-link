@@ -2,15 +2,27 @@
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
+using System.Text.Json;
 
 namespace geo_auth.Triggers;
 
-public partial class Queues(IMediator mediator)
+public partial class Queues(IMediator mediator, JsonSerializerOptions jsonSerializerOptions)
 {
     public async Task RunAsync(
-        [QueueTrigger("machine-data-access", Connection = "AzureWebJobsStorage")] MachineDataAccessToken machineDataAccess,
+        [QueueTrigger("machine-data-access", Connection = "AzureWebJobsStorage")] string data,
         FunctionContext executionContext)
     {
+        using var memoryStream = new MemoryStream();
+        using var textWriter = new StreamWriter(memoryStream);
+        textWriter.WriteLine(data);
+        memoryStream.Position = 0;
+        var machineDataAccess = await JsonSerializer.DeserializeAsync<MachineDataAccessToken>(memoryStream, jsonSerializerOptions, executionContext.CancellationToken);
+
+        if (machineDataAccess is null)
+        {
+            return;
+        }
+
         await mediator.Publish(new UpdateMachineQueryAccessTokenNotification { 
             PartitionKey = machineDataAccess.PartitionKey,
             Expires = machineDataAccess.Expires,
