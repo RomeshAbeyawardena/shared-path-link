@@ -30,7 +30,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
         };
         var utcNow = timeProvider.GetUtcNow();
 
-        var descriptor = new SecurityTokenDescriptor
+        var descriptor = new SecurityTokenDescriptor()
         {
             Issuer = tokenConfiguration.ValidAudience,
             Audience = tokenConfiguration.ValidAudience,
@@ -50,8 +50,8 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
     public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)
     {
         var query = $"PartitionKey eq '{request.MachineId}' AND Secret eq '{request.Secret}'";
-        var result = machineTableClient.Query<MachineData>(query, 1,
-            cancellationToken: cancellationToken).FirstOrDefault();
+        var result = await machineTableClient.QueryAsync<MachineData>(query, 1,
+            cancellationToken: cancellationToken).FirstOrDefaultAsync();
 
         if (result is null)
         {
