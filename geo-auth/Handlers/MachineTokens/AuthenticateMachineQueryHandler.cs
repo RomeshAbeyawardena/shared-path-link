@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace geo_auth.Handlers.MachineTokens;
 
-internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token")] TableClient machineTableClient,
+internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient,
     TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions,
     IMediator mediator)
     : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>

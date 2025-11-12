@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace geo_auth.Handlers.MachineTokens;
 
-internal class GetValidMachineAccessTokenQueryHandler([FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
+internal class GetValidMachineAccessTokenQueryHandler([FromKeyedServices(KeyedServices.MachineAccessTokenTable)] TableClient machineAccessTokenTableClient,
     TimeProvider timeProvider) : IRequestHandler<GetValidMachineAccessTokenQuery, MachineAccessToken?>
 {
     public async Task<MachineAccessToken?> Handle(GetValidMachineAccessTokenQuery request, CancellationToken cancellationToken)

@@ -1,3 +1,4 @@
+using geo_auth;
 using geo_auth.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
@@ -20,4 +21,8 @@ builder
     .Configuration
     .AddUserSecrets(typeof(Program).Assembly);
 
-builder.Build().Run();
+var app = builder.Build();
+var setup = app.Services.GetRequiredService<Setup>();
+setup.RunOnce();
+
+app.Run();

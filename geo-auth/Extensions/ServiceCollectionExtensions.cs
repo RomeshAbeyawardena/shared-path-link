@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using Azure.Storage.Queues;
 using geo_auth.Handlers.MachineTokens;
 using geo_auth.Handlers.Passwords;
 using geo_auth.Handlers.Tokens;
@@ -9,16 +10,32 @@ using System.Text.Json;
 
 namespace geo_auth.Extensions;
 
+public static class KeyedServices
+{
+    public const string MachineAccessTokenQueue = "machine-access-token-queue";
+    public const string MachineAccessTokenTable = "machine-access-token-table";
+    public const string MachineTable = "machine-table";
+
+    public static readonly IReadOnlyDictionary<string, Type> Services = new Dictionary<string, Type>
+    {
+        { MachineTable, typeof(TableClient) },
+        { MachineAccessTokenQueue, typeof(QueueClient) },
+        { MachineAccessTokenTable, typeof(TableClient) }
+    };
+}
+
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
-        return services.AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
+        return services
+            .AddSingleton<Setup>()
+            .AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
         {
             PropertyNameCaseInsensitive = true
         })
         .AddSingleton(TimeProvider.System)
-        .AddKeyedTransient("machine-access-token", (s, key) =>
+        .AddKeyedTransient(KeyedServices.MachineAccessTokenQueue, (s, key) =>
         {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
                 .Value;
@@ -30,7 +47,7 @@ public static class ServiceCollectionExtensions
             queueClient.CreateIfNotExists();
             return queueClient;
         })
-        .AddKeyedTransient("machine-token",(s, key) =>
+        .AddKeyedTransient(KeyedServices.MachineTable, (s, key) =>
         {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
                 .Value;
@@ -42,7 +59,7 @@ public static class ServiceCollectionExtensions
                 machineTokenTableConfiguration.MachineTokenTableName);
             tableClient.CreateIfNotExists();
             return tableClient;
-        }).AddKeyedTransient("machine-access-token", (s, key) => {
+        }).AddKeyedTransient(KeyedServices.MachineAccessTokenTable, (s, key) => {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
                 .Value;
 

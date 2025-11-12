@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using geo_auth.Extensions;
 using geo_auth.Models;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace geo_auth.Handlers.MachineTokens
 {
     internal class UpdateMachineAccessTokenCommandHandler(
-        [FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
+        [FromKeyedServices(KeyedServices.MachineAccessTokenTable)] TableClient machineAccessTokenTableClient,
         TimeProvider timeProvider) 
         : IRequestHandler<UpdateMachineAccessTokenCommand>
     {

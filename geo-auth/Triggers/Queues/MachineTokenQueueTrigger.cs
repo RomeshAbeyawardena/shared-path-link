@@ -10,7 +10,7 @@ public partial class Queues(IMediator mediator, JsonSerializerOptions jsonSerial
 {
     [Function("queue-machine-access-token")]
     public async Task RunAsync(
-        [QueueTrigger("machine-data-access", Connection = "AzureWebJobsStorage")] string data,
+        [QueueTrigger("machine-access-token", Connection = "AzureWebJobsStorage")] string data,
         FunctionContext executionContext)
     {
         using var memoryStream = new MemoryStream();
