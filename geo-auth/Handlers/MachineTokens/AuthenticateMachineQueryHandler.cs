@@ -15,12 +15,11 @@ using Microsoft.IdentityModel.Tokens;
 namespace geo_auth.Handlers.MachineTokens;
 
 internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token")] TableClient machineTableClient,
-    [FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
     TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions,
     IMediator mediator)
     : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>
 {
-    private string GenerateToken(MachineData request, CancellationToken cancellationToken)
+    private string GenerateToken(MachineData request)
     {
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
@@ -59,10 +58,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
             return new AuthenticateMachineResult(null, new ResponseException("Machine authentication failed", StatusCodes.Status401Unauthorized));
         }
 
-        var utcNowDate = timeProvider.GetUtcNow().UtcDateTime;
-        var accessToken = await machineAccessTokenTableClient.QueryAsync<MachineDataAccessToken>(
-            $"PartitionKey eq '{request.MachineId}' AND ValidFrom le datetime'{utcNowDate:O}' AND Expires ge datetime'{utcNowDate:O}'", 1, cancellationToken: cancellationToken)
-                .FirstOrDefaultAsync(cancellationToken);
+        var accessToken = await mediator.Send(new GetValidMachineAccessTokenQuery(result.PartitionKey), cancellationToken);
 
         if (accessToken is not null)
         {
@@ -72,10 +68,10 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
 
         var utcNow = timeProvider.GetUtcNow();
 
-        var newToken = GenerateToken(result, cancellationToken);
+        var newToken = GenerateToken(result);
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
-        await mediator.Publish(new QueueMachineQueryAccessTokenNotification
+        await mediator.Publish(new QueueMachineAccessTokenNotification
         {
             Expires = utcNow.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
             Token = newToken,

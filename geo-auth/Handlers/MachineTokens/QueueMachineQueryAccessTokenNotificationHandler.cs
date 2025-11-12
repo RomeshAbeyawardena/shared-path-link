@@ -8,9 +8,9 @@ namespace geo_auth.Handlers.MachineTokens
 {
     internal class QueueMachineQueryAccessTokenNotificationHandler([FromKeyedServices("machine-access-token")] QueueClient queueClient,
         JsonSerializerOptions jsonSerializerOptions) 
-        : INotificationHandler<QueueMachineQueryAccessTokenNotification>
+        : INotificationHandler<QueueMachineAccessTokenNotification>
     {
-        public async Task Handle(QueueMachineQueryAccessTokenNotification notification, CancellationToken cancellationToken)
+        public async Task Handle(QueueMachineAccessTokenNotification notification, CancellationToken cancellationToken)
         {
             using var stream = new MemoryStream();
             await JsonSerializer.SerializeAsync(stream, notification, jsonSerializerOptions, cancellationToken);

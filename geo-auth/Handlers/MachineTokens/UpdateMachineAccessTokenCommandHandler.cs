@@ -7,11 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace geo_auth.Handlers.MachineTokens
 {
-    internal class UpdateMachineQueryAccessTokenNotificationHandler([FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
+    internal class UpdateMachineAccessTokenCommandHandler(
+        [FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
         TimeProvider timeProvider) 
-        : INotificationHandler<UpdateMachineQueryAccessTokenNotification>
+        : IRequestHandler<UpdateMachineAccessTokenCommand>
     {
-        public async Task Handle(UpdateMachineQueryAccessTokenNotification notification, CancellationToken cancellationToken)
+        public async Task Handle(UpdateMachineAccessTokenCommand notification, CancellationToken cancellationToken)
         {
             var response = await machineAccessTokenTableClient.AddEntityAsync(new MachineDataAccessToken
             {

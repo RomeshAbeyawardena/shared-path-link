@@ -23,7 +23,7 @@ public partial class Queues(IMediator mediator, JsonSerializerOptions jsonSerial
             return;
         }
 
-        await mediator.Publish(new UpdateMachineQueryAccessTokenNotification { 
+        await mediator.Send(new UpdateMachineAccessTokenCommand { 
             PartitionKey = machineDataAccess.PartitionKey,
             Expires = machineDataAccess.Expires,
             Token = machineDataAccess.Token,
