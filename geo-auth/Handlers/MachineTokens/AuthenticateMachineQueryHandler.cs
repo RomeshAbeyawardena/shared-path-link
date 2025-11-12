@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth.Handlers.MachineTokens;
 
@@ -38,7 +36,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
             Audience = tokenConfiguration.ValidAudience,
             Claims =
                 {
-                    { "machine-id", request.PartitionKey },
+                    { "partition-key", request.PartitionKey },
                     { "row-key", request.RowKey }
                 },
             Expires = utcNow.UtcDateTime,
@@ -73,7 +71,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
 
         var utcNow = timeProvider.GetUtcNow();
 
-        var newToken = GenerateToken(request, cancellationToken);
+        var newToken = GenerateToken(result, cancellationToken);
         var response = await machineAccessTokenTableClient.AddEntityAsync(new MachineDataAccessToken
         {
             PartitionKey = request.MachineId.GetValueOrDefault().ToString(),
