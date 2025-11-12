@@ -46,7 +46,7 @@ internal class ValidateMachineTokenQueryHandler(IOptions<TokenConfiguration> tok
                 throw failureException;
             }
 
-            if (!token.Claims.TryGetValue("machine-id", out var machineId) || !Guid.TryParse(machineId?.ToString(), out var machId))
+            if (!token.Claims.TryGetValue("machineId", out var machineId) || !Guid.TryParse(machineId?.ToString(), out var machId))
             {
                 throw failureException;
             }

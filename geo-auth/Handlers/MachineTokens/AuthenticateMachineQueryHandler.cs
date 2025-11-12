@@ -49,9 +49,9 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
 
     public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)
     {
-
-        var result = await machineTableClient.QueryAsync<MachineData>($"PartitionKey eq '{request.MachineId}' AND Secret eq '{request.Secret}'", 1,
-            cancellationToken: cancellationToken).FirstOrDefaultAsync(cancellationToken);
+        var query = $"PartitionKey eq '{request.MachineId}' AND Secret eq '{request.Secret}'";
+        var result = machineTableClient.Query<MachineData>(query, 1,
+            cancellationToken: cancellationToken).FirstOrDefault();
 
         if (result is null)
         {
