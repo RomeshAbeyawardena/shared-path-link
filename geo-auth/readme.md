@@ -2,8 +2,9 @@
 ```
 {
     "machine": {
-        "MachineTokenTableName": "MachineTokens",
-        "MachineAccessTokenTableName": "MachineAccessToken"
+        "MachineTokenTableName": "machinetokens",
+        "MachineAccessTokenTableName": "machineaccesstoken",
+        "MachineAccessTokenQueueName": "machine-access-token"
     },
     "token": {
         "SigningKey": "<key.base64>",
