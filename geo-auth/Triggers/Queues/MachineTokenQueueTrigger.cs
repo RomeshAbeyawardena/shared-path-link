@@ -8,6 +8,7 @@ namespace geo_auth.Triggers;
 
 public partial class Queues(IMediator mediator, JsonSerializerOptions jsonSerializerOptions)
 {
+    [Function("queue-machine-access-token")]
     public async Task RunAsync(
         [QueueTrigger("machine-data-access", Connection = "AzureWebJobsStorage")] string data,
         FunctionContext executionContext)
