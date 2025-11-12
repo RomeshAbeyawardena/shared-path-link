@@ -14,6 +14,7 @@ namespace geo_auth.Handlers.MachineTokens
         {
             using var stream = new MemoryStream();
             await JsonSerializer.SerializeAsync(stream, notification, jsonSerializerOptions, cancellationToken);
+            stream.Position = 0;
             using var textReader = new StreamReader(stream);
             await queueClient.SendMessageAsync(textReader.ReadToEnd(), cancellationToken);
         }

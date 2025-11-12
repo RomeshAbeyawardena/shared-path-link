@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
                 .Value;
 
             var queueClient = new Azure.Storage.Queues.QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName);
-
+            queueClient.CreateIfNotExists();
             return queueClient;
         })
         .AddKeyedTransient("machine-token",(s, key) =>
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
 
             var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
                 machineTokenTableConfiguration.MachineTokenTableName);
-
+            tableClient.CreateIfNotExists();
             return tableClient;
         }).AddKeyedTransient("machine-access-token", (s, key) => {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions
 
             var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
                 machineTokenTableConfiguration.MachineAccessTokenTableName);
-
+            tableClient.CreateIfNotExists();
             return tableClient;
         });
     }
