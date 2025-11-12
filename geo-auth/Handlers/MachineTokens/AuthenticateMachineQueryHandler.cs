@@ -16,7 +16,8 @@ namespace geo_auth.Handlers.MachineTokens;
 
 internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token")] TableClient machineTableClient,
     [FromKeyedServices("machine-access-token")] TableClient machineAccessTokenTableClient,
-    TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions)
+    TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions,
+    IMediator mediator)
     : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>
 {
     private string GenerateToken(MachineData request, CancellationToken cancellationToken)
@@ -73,23 +74,16 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices("machine-token
 
         var newToken = GenerateToken(result, cancellationToken);
         var tokenConfiguration = tokenConfigurationOptions.Value;
-        var response = await machineAccessTokenTableClient.AddEntityAsync(new MachineDataAccessToken
+
+        await mediator.Publish(new QueueMachineQueryAccessTokenNotification
         {
-            PartitionKey = request.MachineId.GetValueOrDefault().ToString(),
-            RowKey = Guid.NewGuid().ToString(),
+            Expires = utcNow.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
             Token = newToken,
             ValidFrom = utcNow,
-            Expires = utcNow.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
-            Timestamp = utcNow,
-            ETag = ETag.All
+            PartitionKey = request.MachineId.GetValueOrDefault().ToString(),
+            
         }, cancellationToken);
-
-        if (!response.IsError)
-        {
-            return new AuthenticateMachineResult(new MachineToken(newToken));
-        }
-
-        return new AuthenticateMachineResult(null, new ResponseException("Unable to generate token",
-            StatusCodes.Status500InternalServerError, new Exception(response.ReasonPhrase)));
+        
+        return new AuthenticateMachineResult(new MachineToken(newToken));
     }
 }
