@@ -16,7 +16,7 @@ namespace geo_auth;
 public static partial class Endpoints
 {
     [Function("begin-auth")]
-    public static async Task <IResult> BeginAuth(
+    public static async Task <IResult> BeginAuthAsync(
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
         FunctionContext executionContext)
     {

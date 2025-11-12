@@ -12,7 +12,7 @@ internal record MachineData : ITableEntity
     public ETag ETag { get; set; }
 }
 
-internal record MachineDataAccessToken : ITableEntity
+public record MachineDataAccessToken : ITableEntity
 {
     public string? Token { get; set; }
     public DateTimeOffset ValidFrom { get; set; }

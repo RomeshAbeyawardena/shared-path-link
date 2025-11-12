@@ -15,7 +15,7 @@ namespace geo_auth;
 public static partial class Endpoints
 {
     [Function("hasher")]
-    public static async Task<IResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
+    public static async Task<IResult> RunHasherAsync([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request,
         FunctionContext executionContext)
     {
         string[] acceptableEncodings = ["jwt"];

@@ -4,7 +4,7 @@
     "machine": {
         "MachineTokenTableName": "MachineTokens",
         "MachineAccessTokenTableName": "MachineAccessToken"
-    }
+    },
     "token": {
         "SigningKey": "<key.base64>",
         "SigningKeyId": "{guid}",

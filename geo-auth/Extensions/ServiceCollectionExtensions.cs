@@ -16,7 +16,9 @@ public static class ServiceCollectionExtensions
         return services.AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
         {
             PropertyNameCaseInsensitive = true
-        }).AddKeyedTransient("machine-token",(s, key) =>
+        })
+        .AddSingleton(TimeProvider.System)
+        .AddKeyedTransient("machine-token",(s, key) =>
         {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
                 .Value;
