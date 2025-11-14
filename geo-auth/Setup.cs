@@ -96,6 +96,7 @@ public class Setup(ILogger<Setup> logger,
     {
         if (HasRun)
         {
+            logger.LogWarning("Setup has already been run and can not be run again");
             return;
         }
 
