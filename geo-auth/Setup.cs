@@ -173,7 +173,7 @@ public class Setup(ILogger<Setup> logger,
         foreach(var (key, config) in serviceStatus)
         {
             healthCheckTable.AppendLine($"{key.ToFixedLength(26)}\t{config.Type.Name.ToFixedLength(12)}" +
-                $"\t{config.Exists.GetValueOrDefault().ToString().ToFixedLength(6)}\t{config.Exception?.Message?.ToFixedLength(32)}");
+                $"\t{(config.Exists.GetValueOrDefault() ? "Yes" : "No" ).ToString().ToFixedLength(6)}\t{(config.Exception?.Message ?? "N/A").ToFixedLength(32)}");
         }
 
         logger.LogInformation("{healthCheck}", healthCheckTable.ToString());
