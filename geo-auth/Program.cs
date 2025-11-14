@@ -27,6 +27,8 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 var setup = app.Services.GetRequiredService<Setup>();
+
 await setup.RunOnceAsync();
 
+setup.BuildHealthCheckTable(await setup.HealthCheckAsync());
 app.Run();

@@ -2,11 +2,16 @@
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using geo_auth.Extensions;
+using Google.Protobuf.Collections;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace geo_auth;
+
+public record ColumnDefiniton(string Name, int Length);
 
 public record SetupConfiguration
 {
@@ -21,6 +26,11 @@ public record SetupTableEntity : ITableEntity
     public string RowKey { get; set; } = default!;
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
+}
+
+public record ServiceStatus(string Key, Type Type, bool? Exists, Exception? Exception = null)
+{
+
 }
 
 public class Setup(ILogger<Setup> logger,
@@ -90,6 +100,83 @@ public class Setup(ILogger<Setup> logger,
                 logger.LogError("Upsert failed: {reasonPhrase}", response.ReasonPhrase);
             }
         }
+    }
+
+    private async Task<ServiceStatus?> CheckHealthAsync(string key, object client)
+    {
+        bool? exists;
+        try
+        {
+            if (client is QueueClient queueClient)
+            {
+                exists = await queueClient.ExistsAsync();
+                return new ServiceStatus(key, typeof(QueueClient), exists);
+            }
+
+            if (client is TableClient tableClient)
+            {
+                await tableClient.QueryAsync<TableEntity>().FirstOrDefaultAsync(CancellationToken.None);
+                return new ServiceStatus(key, typeof(TableClient), true);
+            }
+
+            return null;
+        }
+        catch (RequestFailedException ex)
+        {
+            return new ServiceStatus(key, typeof(object), null, ex);
+        }
+    }
+
+    public async Task<IReadOnlyDictionary<string, ServiceStatus>> HealthCheckAsync()
+    {
+        logger.LogInformation("Initiating health-check...");
+        var healthCheckStatuses = new Dictionary<string, ServiceStatus>();
+        foreach(var (key, config) in KeyedServices.Services)
+        {
+            var client = services.GetRequiredKeyedService(config.ServiceType, key);
+            var result = await CheckHealthAsync(key, client);
+            if (result is null)
+            {
+                continue;
+            }
+
+            healthCheckStatuses.Add(key, result);
+        }
+
+        return healthCheckStatuses;
+    }
+
+    public void BuildHealthCheckTable(IReadOnlyDictionary<string, ServiceStatus> serviceStatus)
+    {
+        logger.LogInformation("Building health-check table...");
+        var healthCheckTable = new StringBuilder();
+        ColumnDefiniton[] columnNames = [
+            new ColumnDefiniton("Key", 26),
+            new ColumnDefiniton("Type", 12),
+            new ColumnDefiniton("Exists", 6), 
+            new ColumnDefiniton("Error", 32)];
+
+        for (int i = 0; i < columnNames.Length; i++)
+        {
+            var column = columnNames[i];
+
+            if (i > 0)
+            {
+                healthCheckTable.Append('\t');
+            }
+
+            healthCheckTable.Append($"{column.Name.ToFixedLength(column.Length)}");
+        }
+
+        healthCheckTable.Append(Environment.NewLine);
+
+        foreach(var (key, config) in serviceStatus)
+        {
+            healthCheckTable.AppendLine($"{key.ToFixedLength(26)}\t{config.Type.Name.ToFixedLength(12)}" +
+                $"\t{config.Exists.GetValueOrDefault().ToString().ToFixedLength(6)}\t{config.Exception?.Message?.ToFixedLength(32)}");
+        }
+
+        logger.LogInformation("{healthCheck}", healthCheckTable.ToString());
     }
 
     public async Task RunOnceAsync()
