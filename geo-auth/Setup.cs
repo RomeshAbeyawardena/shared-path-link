@@ -48,14 +48,14 @@ public class Setup(ILogger<Setup> logger,
         ServiceConfiguration serviceConfiguration)
     {
         return await setupTableClient.QueryAsync<SetupTableEntity>(
-            $"Key eq '{key}' and PartitionId eq '{serviceConfiguration.ServiceType.Name}'", 1)
+            $"Key eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
             .FirstOrDefaultAsync() is not null;
     }
 
     private async Task SetEntityStatusAsync(string key, ServiceConfiguration serviceConfiguration)
     {
         var entity = await setupTableClient.QueryAsync<SetupTableEntity>(
-            $"Key eq '{key}' and PartitionId eq '{serviceConfiguration.ServiceType.Name}'", 1)
+            $"Key eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
             .FirstOrDefaultAsync();
 
         if (entity is null)
