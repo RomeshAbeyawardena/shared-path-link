@@ -19,7 +19,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
     IMediator mediator)
     : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>
 {
-    private string GenerateToken(MachineData request)
+    private string GenerateToken(AuthenticateMachineQuery query, MachineData request)
     {
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
@@ -37,7 +37,8 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
         descriptor.Claims = new Dictionary<string, object>
                 {
                     { "partition-key", request.PartitionKey },
-                    { "row-key", request.RowKey }
+                    { "row-key", request.RowKey },
+                    { "scopes",  query.Scopes ?? string.Empty }
                 };
         descriptor.Expires = utcNow.UtcDateTime;
         descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -67,7 +68,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
 
         var utcNow = timeProvider.GetUtcNow();
 
-        var newToken = GenerateToken(result);
+        var newToken = GenerateToken(request, result);
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
         await mediator.Publish(new QueueMachineAccessTokenNotification

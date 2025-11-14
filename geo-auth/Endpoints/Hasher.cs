@@ -25,6 +25,13 @@ public static partial class Endpoints
         var cancellationToken = executionContext.CancellationToken;
         try
         {
+            var result = await AuthoriseOrFail(request, cancellationToken, mediator);
+
+            if (result is not null)
+            {
+                return result;
+            }
+
             var inputResponse = await mediator.Send(new ValidateRequestCommand { 
                 AcceptableEncodings = acceptableEncodings,
                 HttpContext = request.HttpContext }, cancellationToken);
