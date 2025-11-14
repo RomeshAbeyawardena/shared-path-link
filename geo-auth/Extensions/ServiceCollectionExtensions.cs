@@ -1,5 +1,6 @@
 ﻿using Azure.Data.Tables;
 using Azure.Storage.Queues;
+using geo_auth.Configuration;
 using geo_auth.Handlers.MachineTokens;
 using geo_auth.Handlers.Passwords;
 using geo_auth.Handlers.Tokens;

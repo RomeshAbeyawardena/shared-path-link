@@ -1,4 +1,4 @@
-using geo_auth;
+using geo_auth.Configuration;
 using geo_auth.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;

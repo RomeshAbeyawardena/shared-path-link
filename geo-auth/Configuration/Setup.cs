@@ -3,38 +3,19 @@ using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using geo_auth.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace geo_auth;
+namespace geo_auth.Configuration;
 
 public record ColumnDefiniton(string Name, int Length);
 
-public record SetupConfiguration
-{
-    public string? SetupTableName { get; init; }
-    public bool IncludeQueues { get; init; }
-    public bool IncludeTables { get; init; }
-}
-
-public record SetupTableEntity : ITableEntity
-{
-    public string PartitionKey { get; set; } = default!;
-    public string RowKey { get; set; } = default!;
-    public DateTimeOffset? Timestamp { get; set; }
-    public ETag ETag { get; set; }
-}
-
-public record ServiceStatus(string Key, Type Type, bool? Exists, Exception? Exception = null)
-{
-    public bool IsError => Exception is not null;
-}
-
-public class Setup(ILogger<Setup> logger,
+internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
     [FromKeyedServices(KeyedServices.SetupTable)] TableClient setupTableClient,
-    TimeProvider timeProvider,
+    TimeProvider timeProvider, IHostEnvironment hostEnvironment,
     IServiceProvider services)
 {
     private bool hasRun = false;
@@ -69,6 +50,31 @@ public class Setup(ILogger<Setup> logger,
         }
     }
 
+    private async static Task<ServiceStatus?> CheckHealthAsync(string key, object client)
+    {
+        bool? exists;
+        try
+        {
+            if (client is QueueClient queueClient)
+            {
+                exists = await queueClient.ExistsAsync();
+                return new ServiceStatus(key, typeof(QueueClient), exists);
+            }
+
+            if (client is TableClient tableClient)
+            {
+                await tableClient.QueryAsync<TableEntity>().FirstOrDefaultAsync(CancellationToken.None);
+                return new ServiceStatus(key, typeof(TableClient), true);
+            }
+
+            return null;
+        }
+        catch (RequestFailedException ex)
+        {
+            return new ServiceStatus(key, typeof(object), null, ex);
+        }
+    }
+
     private Task<SetupTableEntity?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<SetupTableEntity>(
             $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
             .FirstOrDefaultAsync();
@@ -97,31 +103,6 @@ public class Setup(ILogger<Setup> logger,
             {
                 logger.LogError("Upsert failed: {reasonPhrase}", response.ReasonPhrase);
             }
-        }
-    }
-
-    private async Task<ServiceStatus?> CheckHealthAsync(string key, object client)
-    {
-        bool? exists;
-        try
-        {
-            if (client is QueueClient queueClient)
-            {
-                exists = await queueClient.ExistsAsync();
-                return new ServiceStatus(key, typeof(QueueClient), exists);
-            }
-
-            if (client is TableClient tableClient)
-            {
-                await tableClient.QueryAsync<TableEntity>().FirstOrDefaultAsync(CancellationToken.None);
-                return new ServiceStatus(key, typeof(TableClient), true);
-            }
-
-            return null;
-        }
-        catch (RequestFailedException ex)
-        {
-            return new ServiceStatus(key, typeof(object), null, ex);
         }
     }
 
@@ -213,16 +194,25 @@ public class Setup(ILogger<Setup> logger,
             logger.LogInformation("Setting up: {key} of {type}", key, config.ServiceType.Name);
             if (!config.IsEnabled 
                 || await GetEntityStatusAsync(key, config)
-                || (config.ServiceType == typeof(TableClient) && !setupConfiguration.IncludeTables)
-                || (config.ServiceType == typeof(QueueClient) && !setupConfiguration.IncludeQueues))
+                || config.ServiceType == typeof(TableClient) && !setupConfiguration.IncludeTables
+                || config.ServiceType == typeof(QueueClient) && !setupConfiguration.IncludeQueues)
             {
                 logger.LogWarning("{key} of {type} skipped", key, config.ServiceType.Name);
                 continue;
             }
-
             var client = services.GetRequiredKeyedService(config.ServiceType, key);
             await CreateIfNotExistsAsync(client);
             await SetEntityStatusAsync(key, config);
+            configuredServicesCount++;
+        }
+
+        if (setupConfiguration.IncludeDevelopmentData)
+        {
+            if (!hostEnvironment.IsDevelopment())
+            {
+                logger.LogWarning("Including development data in a production environment is not recommended.");
+                await services.GetRequiredService<DevelopmentSetup>().RunOnceAsync(setupConfiguration, true);
+            }
         }
 
         logger.LogInformation("Setup completed. {count} services required configuring.", configuredServicesCount > 0 ? configuredServicesCount.ToString() : "No");

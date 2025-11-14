@@ -5,13 +5,32 @@ using GeoAuth.Shared.Requests.MachineToken;
 
 namespace geo_auth.Models;
 
-internal record MachineData : ITableEntity
+internal interface IMachineData
 {
+    string? Secret { get; }
+    string PartitionKey { get;}
+    string RowKey { get;}
+    DateTimeOffset? Timestamp { get; }
+    ETag ETag { get; }
+}
+
+internal record MachineData : MappableBase<IMachineData>, ITableEntity, IMachineData
+{
+    protected override IMachineData Source => this;
     public string? Secret { get; set; }
     public required string PartitionKey { get; set; }
     public required string RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
+
+    public override void Map(IMachineData source)
+    {
+        Secret = source.Secret;
+        PartitionKey = source.PartitionKey;
+        RowKey = source.RowKey;
+        Timestamp = source.Timestamp;
+        ETag = source.ETag;
+    }
 }
 
 public record MachineDataAccessToken : MappableBase<IMachineAccessToken>, IMachineAccessToken, ITableEntity
