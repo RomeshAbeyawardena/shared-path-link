@@ -10,17 +10,21 @@ using System.Text.Json;
 
 namespace geo_auth.Extensions;
 
+public record ServiceConfiguration(Type ServiceType, bool IsEnabled);
+
 public static class KeyedServices
 {
+    public const string SetupTable = "setup-table";
     public const string MachineAccessTokenQueue = "machine-access-token-queue";
     public const string MachineAccessTokenTable = "machine-access-token-table";
     public const string MachineTable = "machine-table";
 
-    public static readonly IReadOnlyDictionary<string, Type> Services = new Dictionary<string, Type>
+    public static readonly IReadOnlyDictionary<string, ServiceConfiguration> Services = new Dictionary<string, ServiceConfiguration>
     {
-        { MachineTable, typeof(TableClient) },
-        { MachineAccessTokenQueue, typeof(QueueClient) },
-        { MachineAccessTokenTable, typeof(TableClient) }
+        { MachineTable, new ServiceConfiguration(typeof(TableClient), true) },
+        { MachineAccessTokenQueue, new ServiceConfiguration(typeof(QueueClient), true) },
+        { MachineAccessTokenTable, new ServiceConfiguration(typeof(TableClient), true) },
+        { SetupTable, new ServiceConfiguration(typeof(TableClient), false) }
     };
 }
 
@@ -47,7 +51,7 @@ public static class ServiceCollectionExtensions
             {
                 MessageEncoding = QueueMessageEncoding.Base64
             });
-            queueClient.CreateIfNotExists();
+            
             return queueClient;
         })
         .AddKeyedTransient(KeyedServices.MachineTable, (s, key) =>
@@ -60,9 +64,9 @@ public static class ServiceCollectionExtensions
 
             var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
                 machineTokenTableConfiguration.MachineTokenTableName);
-            tableClient.CreateIfNotExists();
             return tableClient;
-        }).AddKeyedTransient(KeyedServices.MachineAccessTokenTable, (s, key) => {
+        })
+        .AddKeyedTransient(KeyedServices.MachineAccessTokenTable, (s, key) => {
             var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
                 .Value;
 
@@ -71,9 +75,18 @@ public static class ServiceCollectionExtensions
 
             var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
                 machineTokenTableConfiguration.MachineAccessTokenTableName);
-            tableClient.CreateIfNotExists();
             return tableClient;
-        });
+        })
+        .AddKeyedTransient(KeyedServices.SetupTable, (s, key) => {
+             var setupTableConfiguration = s.GetRequiredService<IOptions<SetupConfiguration>>()
+                 .Value;
+
+             var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
+                 .Value;
+
+             return new TableClient(valuesConfiguration.AzureWebJobsStorage,
+                 setupTableConfiguration.SetupTableName);
+         });
     }
 
     public static IServiceCollection RegisterHandlers(this IServiceCollection services)

@@ -8,7 +8,8 @@
     },
     "setup": {
         "IncludeQueues": true,
-        "IncludeTables": true
+        "IncludeTables": true,
+        "SetupTableName": "setup"
     },
     "password": {
         "KnownSecret": "<key.base64>",

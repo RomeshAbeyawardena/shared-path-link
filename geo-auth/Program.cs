@@ -23,6 +23,6 @@ builder
 
 var app = builder.Build();
 var setup = app.Services.GetRequiredService<Setup>();
-setup.RunOnce();
+await setup.RunOnceAsync();
 
 app.Run();
