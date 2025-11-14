@@ -5,7 +5,6 @@ using geo_auth.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Formats.Asn1;
 
 namespace geo_auth;
 
