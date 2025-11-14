@@ -97,6 +97,6 @@ public class Setup(ILogger<Setup> logger,
             await CreateIfNotExistsAsync(client);
             await SetEntityStatusAsync(key, config);
         }
-        logger.LogInformation("Setup completed. Configured {count} services.", configuredServicesCount);
+        logger.LogInformation("Setup completed. {count} services required configuring.", configuredServicesCount > 0 ? configuredServicesCount.ToString() : "No");
     }
 }
