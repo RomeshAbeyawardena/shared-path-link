@@ -29,6 +29,26 @@ public class Setup(ILogger<Setup> logger,
     TimeProvider timeProvider,
     IServiceProvider services)
 {
+    private bool hasRun = false;
+    private readonly ReaderWriterLockSlim hasRunLock = new(LockRecursionPolicy.NoRecursion);
+    private bool HasRun
+    {
+        get
+        {
+            hasRunLock.EnterReadLock();
+            var value = hasRun;
+            hasRunLock.ExitReadLock();
+            return value;
+        }
+
+        set
+        {
+            hasRunLock.EnterWriteLock();
+            hasRun = value;
+            hasRunLock.ExitWriteLock();
+        }
+    }
+
     private static async Task CreateIfNotExistsAsync(object client)
     {
         if (client is TableClient tableClient)
@@ -74,6 +94,11 @@ public class Setup(ILogger<Setup> logger,
 
     public async Task RunOnceAsync()
     {
+        if (HasRun)
+        {
+            return;
+        }
+
         var setupConfiguration = setupOptions.Value;
 
         await setupTableClient.CreateIfNotExistsAsync();
@@ -97,6 +122,8 @@ public class Setup(ILogger<Setup> logger,
             await CreateIfNotExistsAsync(client);
             await SetEntityStatusAsync(key, config);
         }
+
         logger.LogInformation("Setup completed. {count} services required configuring.", configuredServicesCount > 0 ? configuredServicesCount.ToString() : "No");
+        HasRun = true;
     }
 }
