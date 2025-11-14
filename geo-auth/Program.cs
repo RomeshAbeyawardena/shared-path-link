@@ -29,6 +29,10 @@ var app = builder.Build();
 var setup = app.Services.GetRequiredService<Setup>();
 
 await setup.RunOnceAsync();
+var healthCheck = await setup.HealthCheckAsync();
+setup.BuildHealthCheckTable(healthCheck);
 
-setup.BuildHealthCheckTable(await setup.HealthCheckAsync());
-app.Run();
+if (!setup.DetectAndLogFailures(healthCheck))
+{
+    await app.RunAsync();
+}

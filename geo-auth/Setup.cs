@@ -2,8 +2,6 @@
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using geo_auth.Extensions;
-using Google.Protobuf.Collections;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,7 +28,7 @@ public record SetupTableEntity : ITableEntity
 
 public record ServiceStatus(string Key, Type Type, bool? Exists, Exception? Exception = null)
 {
-
+    public bool IsError => Exception is not null;
 }
 
 public class Setup(ILogger<Setup> logger,
@@ -177,6 +175,22 @@ public class Setup(ILogger<Setup> logger,
         }
 
         logger.LogInformation("{healthCheck}", healthCheckTable.ToString());
+    }
+
+    public bool DetectAndLogFailures(IReadOnlyDictionary<string, ServiceStatus> serviceStatuses)
+    {
+        if (!serviceStatuses.Any((x) => x.Value.IsError))
+        {
+            logger.LogInformation("Health checks passed, continuing operation...");
+            return false;
+        }
+
+        foreach (var (key, serviceStatus) in serviceStatuses)
+        {
+            logger.LogError(serviceStatus.Exception, "Failure occurred with {key}", key);
+        }
+
+        return true;
     }
 
     public async Task RunOnceAsync()
