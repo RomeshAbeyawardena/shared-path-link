@@ -88,7 +88,7 @@ public static class ServiceCollectionExtensions
             .ValidateOnStart();
 
         services.AddOptions<ValuesConfiguration>()
-            .Bind(configuration.GetSection("Values"))
+            .Bind(configuration.GetSection("values"))
             .ValidateOnStart();
 
         services.AddOptions<PasswordConfiguration>()
