@@ -19,9 +19,11 @@ internal class DevelopmentSetup([FromKeyedServices(KeyedServices.MachineTable)] 
             logger.LogWarning("Including development data in a production environment is not recommended.");
         }
 
+        logger.LogInformation("Within seeding data operation");
+
         if (setupConfiguration.MachineData is null)
         {
-            logger.LogWarning("No development data to copy");
+            logger.LogWarning("No development data to seed");
             return;
         }
 
@@ -32,7 +34,16 @@ internal class DevelopmentSetup([FromKeyedServices(KeyedServices.MachineTable)] 
 
         clonedMachineData.Map(setupConfiguration.MachineData);
 
-        await machineTableClient.UpsertEntityAsync(clonedMachineData);
+        var result = await machineTableClient.GetEntityIfExistsAsync<MachineData>(clonedMachineData.PartitionKey, clonedMachineData.RowKey);
+        if (!result.HasValue)
+        {
+            await machineTableClient.UpsertEntityAsync(clonedMachineData);
+            logger.LogInformation("Development data seeded");
+        }
+        else
+        {
+            logger.LogInformation("Seeding data operation skipped! Reason: Potentially exists and is not stale, evaluate inserted data before proceeding.");
+        }
     }
 
     public Task RunOnceAsync()
