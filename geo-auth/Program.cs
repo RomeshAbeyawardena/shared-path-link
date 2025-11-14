@@ -19,6 +19,7 @@ builder.Services
 
 builder
     .Configuration
+    .AddEnvironmentVariables()
     .AddUserSecrets(typeof(Program).Assembly);
 
 var app = builder.Build();
