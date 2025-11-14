@@ -19,7 +19,6 @@ public record SetupTableEntity : ITableEntity
 {
     public string PartitionKey { get; set; } = default!;
     public string RowKey { get; set; } = default!;
-    public string? Key { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
 }
@@ -42,30 +41,34 @@ public class Setup(ILogger<Setup> logger,
         }
     }
 
+    private Task<SetupTableEntity?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<SetupTableEntity>(
+            $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
+            .FirstOrDefaultAsync();
+
     private async Task<bool> GetEntityStatusAsync(string key, 
         ServiceConfiguration serviceConfiguration)
     {
-        return await setupTableClient.QueryAsync<SetupTableEntity>(
-            $"Key eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
-            .FirstOrDefaultAsync() is not null;
+        return await GetSetupTableEntity(key, serviceConfiguration) is not null;
     }
 
     private async Task SetEntityStatusAsync(string key, ServiceConfiguration serviceConfiguration)
     {
-        var entity = await setupTableClient.QueryAsync<SetupTableEntity>(
-            $"Key eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
-            .FirstOrDefaultAsync();
+        var entity = await GetSetupTableEntity(key, serviceConfiguration);
 
         if (entity is null)
         {
-            await setupTableClient.AddEntityAsync(new SetupTableEntity
+            var response = await setupTableClient.UpsertEntityAsync(new SetupTableEntity
             {
-                Key = key,
+                RowKey = key,
                 PartitionKey = serviceConfiguration.ServiceType.Name,
-                RowKey = Guid.NewGuid().ToString(),
                 Timestamp = timeProvider.GetUtcNow(),
                 ETag = ETag.All
             });
+
+            if (response.IsError)
+            {
+                logger.LogError("Upsert failed: {reasonPhrase}", response.ReasonPhrase);
+            }
         }
     }
 
@@ -73,10 +76,10 @@ public class Setup(ILogger<Setup> logger,
     {
         var setupConfiguration = setupOptions.Value;
 
-        setupTableClient.CreateIfNotExists();
+        await setupTableClient.CreateIfNotExistsAsync();
 
         logger.LogTrace("Setup configuration: {configuration}", setupConfiguration);
-
+        int configuredServicesCount = 0;
         logger.LogInformation("Registered key services: {count}", KeyedServices.Services.Count);
         foreach (var (key, config) in KeyedServices.Services)
         {
@@ -94,6 +97,6 @@ public class Setup(ILogger<Setup> logger,
             await CreateIfNotExistsAsync(client);
             await SetEntityStatusAsync(key, config);
         }
-
+        logger.LogInformation("Setup completed. Configured {count} services.", configuredServicesCount);
     }
 }
