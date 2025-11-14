@@ -11,7 +11,7 @@ public interface IValidateAccessTokenResult
 
 public record ValidateAccessTokenResult : IValidateAccessTokenResult
 {
-    public IEnumerable<string> Scopes { get; init; }
+    public IEnumerable<string> Scopes { get; init; } = [];
 }
 
 public record ValidateAccessTokenResponse(ValidateAccessTokenResult? Result, 

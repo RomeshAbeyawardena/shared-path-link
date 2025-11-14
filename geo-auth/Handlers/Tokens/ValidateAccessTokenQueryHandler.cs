@@ -35,20 +35,23 @@ internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> toke
                 //ValidateTokenReplay = true
             });
 
+            var defaultException = new ResponseException("Token is invalid", StatusCodes.Status401Unauthorized);
+
             if (!result.IsValid)
             {
-                throw new ResponseException("Token is invalid", StatusCodes.Status401Unauthorized);
+                throw defaultException;
             }
 
             if (!result.Claims.TryGetValue("parition-key", out var paritionKey))
             {
-                throw new ResponseException("Token is invalid", StatusCodes.Status401Unauthorized);
+                throw defaultException;
             }
 
             if (!result.Claims.TryGetValue("row-key", out var rowKey))
             {
-                throw new ResponseException("Token is invalid", StatusCodes.Status401Unauthorized);
+                throw defaultException;
             }
+
             var scopeList = new List<string>();
             if (result.Claims.TryGetValue("scopes", out var scopes))
             {

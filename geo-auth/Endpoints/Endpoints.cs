@@ -16,7 +16,7 @@ public static partial class Endpoints
             && Guid.TryParse(automationIdValue, out var id) ? id : null;
     }
 
-    public static async Task<IResult?> AuthoriseOrFail(HttpRequest request, CancellationToken cancellationToken, IMediator? mediator = null)
+    public static async Task<IResult?> AuthoriseOrFail(HttpRequest request, CancellationToken cancellationToken, IMediator? mediator = null, params string[] acceptableScopes)
     {
         try
         {
@@ -30,7 +30,12 @@ public static partial class Endpoints
 
             var accessTokenResult = await mediator.Send(new ValidateAccessTokenQuery(authorisationHeader), cancellationToken);
 
-            if (!accessTokenResult.IsSuccess)
+            if (!accessTokenResult.IsSuccess || accessTokenResult.Result is null)
+            {
+                throw new ResponseException("Not authorised", StatusCodes.Status401Unauthorized, accessTokenResult.Exception);
+            }
+
+            if (acceptableScopes.Length > 0 && !acceptableScopes.Any(x => accessTokenResult.Result.Scopes.Contains(x.ToLower())))
             {
                 throw new ResponseException("Not authorised", StatusCodes.Status401Unauthorized);
             }
