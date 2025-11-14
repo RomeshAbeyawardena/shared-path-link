@@ -26,13 +26,17 @@ builder
 builder.Logging.AddConsole();
 
 var app = builder.Build();
-var setup = app.Services.GetRequiredService<Setup>();
+var setup = app.Services.GetRequiredKeyedService<ISetup>(string.Empty);
 
 await setup.RunOnceAsync();
-var healthCheck = await setup.HealthCheckAsync();
-setup.BuildHealthCheckTable(healthCheck);
 
-if (!setup.DetectAndLogFailures(healthCheck))
+if (setup is Setup defaultSetup)
 {
-    await app.RunAsync();
+    var healthCheck = await defaultSetup.HealthCheckAsync();
+    defaultSetup.BuildHealthCheckTable(healthCheck);
+
+    if (!defaultSetup.DetectAndLogFailures(healthCheck))
+    {
+        await app.RunAsync();
+    }
 }

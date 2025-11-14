@@ -2,18 +2,19 @@
 using geo_auth.Extensions;
 using geo_auth.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace geo_auth.Configuration;
 
 internal class DevelopmentSetup([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient,
-    IOptions<SetupConfiguration> options, ILogger<DevelopmentSetup> logger)
+    IOptions<SetupConfiguration> options, IHostEnvironment hostEnvironment, ILogger<DevelopmentSetup> logger) : ISetup
 {
-    public async Task RunOnceAsync(SetupConfiguration? setupConfiguration = null, bool bypassWarning = false)
+    public async Task RunOnceAsync(SetupConfiguration? setupConfiguration = null)
     {
         setupConfiguration ??= options.Value;
-        if (!setupConfiguration.IncludeDevelopmentData)
+        if (hostEnvironment.IsDevelopment() && !setupConfiguration.IncludeDevelopmentData)
         {
             logger.LogWarning("Including development data in a production environment is not recommended.");
         }
@@ -32,5 +33,10 @@ internal class DevelopmentSetup([FromKeyedServices(KeyedServices.MachineTable)] 
         clonedMachineData.Map(setupConfiguration.MachineData);
 
         await machineTableClient.UpsertEntityAsync(clonedMachineData);
+    }
+
+    public Task RunOnceAsync()
+    {
+        return RunOnceAsync(null);
     }
 }

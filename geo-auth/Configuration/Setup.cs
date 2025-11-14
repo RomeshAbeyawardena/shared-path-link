@@ -12,11 +12,15 @@ namespace geo_auth.Configuration;
 
 public record ColumnDefiniton(string Name, int Length);
 
+internal interface ISetup
+{
+    Task RunOnceAsync();
+}
+
 internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
     [FromKeyedServices(KeyedServices.SetupTable)] TableClient setupTableClient,
-    TimeProvider timeProvider, IHostEnvironment hostEnvironment,
-    IServiceProvider services)
+    TimeProvider timeProvider, IServiceProvider services) : ISetup
 {
     private bool hasRun = false;
     private readonly ReaderWriterLockSlim hasRunLock = new(LockRecursionPolicy.NoRecursion);
@@ -208,11 +212,9 @@ internal class Setup(ILogger<Setup> logger,
 
         if (setupConfiguration.IncludeDevelopmentData)
         {
-            if (!hostEnvironment.IsDevelopment())
-            {
-                logger.LogWarning("Including development data in a production environment is not recommended.");
-                await services.GetRequiredService<DevelopmentSetup>().RunOnceAsync(setupConfiguration, true);
-            }
+            await services
+                .GetRequiredKeyedService<ISetup>("development")
+                .RunOnceAsync();
         }
 
         logger.LogInformation("Setup completed. {count} services required configuring.", configuredServicesCount > 0 ? configuredServicesCount.ToString() : "No");

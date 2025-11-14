@@ -34,7 +34,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
         return services
-            .AddSingleton<Setup>()
+            .AddKeyedSingleton<ISetup, Setup>(string.Empty)
+            .AddKeyedSingleton<ISetup, DevelopmentSetup>("development")
             .AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
         {
             PropertyNameCaseInsensitive = true
