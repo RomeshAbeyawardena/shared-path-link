@@ -36,8 +36,7 @@ public class Setup(ILogger<Setup> logger,
         {
             await tableClient.CreateIfNotExistsAsync();
         }
-
-        if (client is QueueClient queueClient)
+        else if (client is QueueClient queueClient)
         {
             await queueClient.CreateIfNotExistsAsync();
         }
