@@ -6,6 +6,10 @@
         "MachineAccessTokenTableName": "machineaccesstoken",
         "MachineAccessTokenQueueName": "machine-access-token"
     },
+    "setup": {
+        "IncludeQueues": true,
+        "IncludeTables": true
+    },
     "password": {
         "KnownSecret": "<key.base64>",
         "DegreeOfParallelism": 4,

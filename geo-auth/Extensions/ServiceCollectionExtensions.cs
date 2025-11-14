@@ -95,6 +95,10 @@ public static class ServiceCollectionExtensions
             .Bind(configuration.GetSection("password"))
             .ValidateOnStart();
 
+        services.AddOptions<SetupConfiguration>()
+            .Bind(configuration.GetSection("Setup"))
+            .ValidateOnStart();
+
         services.AddOptions<TokenConfiguration>()
             .Bind(configuration.GetSection("token"))
             .ValidateOnStart();
