@@ -19,10 +19,4 @@ internal static class StringExtensions
 
         return string.Concat(value.AsSpan(0, length - 3), "...");
     }
-
-    public static string Base64Encode(this string value, Encoding? encoding = null)
-    {
-        encoding ??= Encoding.UTF8;
-        return Convert.ToBase64String(encoding.GetBytes(value));
-    }
 }

@@ -1,27 +1,18 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using GeoAuth.Infrastructure.Models;
 using GeoAuth.Shared.Models.Records;
 using GeoAuth.Shared.Requests.MachineToken;
 
 namespace geo_auth.Models;
 
-internal interface IMachineData
-{
-    string? Secret { get; }
-    string PartitionKey { get;}
-    string RowKey { get;}
-    DateTimeOffset? Timestamp { get; }
-    ETag ETag { get; }
-}
-
-internal record MachineData : MappableBase<IMachineData>, ITableEntity, IMachineData
+internal record MachineData : MappableBase<IMachineData>, IMachineData
 {
     protected override IMachineData Source => this;
     public string? Secret { get; set; }
     public required string PartitionKey { get; set; }
     public required string RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
-    public ETag ETag { get; set; }
 
     public override void Map(IMachineData source)
     {
@@ -29,7 +20,6 @@ internal record MachineData : MappableBase<IMachineData>, ITableEntity, IMachine
         PartitionKey = source.PartitionKey;
         RowKey = source.RowKey;
         Timestamp = source.Timestamp;
-        ETag = source.ETag;
     }
 }
 

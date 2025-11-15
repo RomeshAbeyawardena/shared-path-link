@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace geo_auth.Extensions;
+namespace GeoAuth.Infrastructure.Azure.Extensions;
 
 public static class AsyncPageableExtensions
 {

@@ -1,20 +1,18 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using geo_auth.Extensions;
-using geo_auth.Handlers.Tokens;
+﻿using geo_auth.Handlers.Tokens;
 using geo_auth.Models;
+using GeoAuth.Infrastructure.Filters;
+using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace geo_auth.Handlers.MachineTokens;
 
-internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient,
+internal class AuthenticateMachineQueryHandler(IMachineRepository machineRepository,
     TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions,
     IMediator mediator)
     : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>
@@ -49,9 +47,11 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
 
     public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)
     {
-        var query = $"PartitionKey eq '{request.MachineId}' AND Secret eq '{request.Secret?.Base64Encode()}'";
-        var result = await machineTableClient.QueryAsync<MachineData>(query, 1,
-            cancellationToken: cancellationToken).FirstOrDefaultAsync();
+        var result = await machineRepository.GetAsync(new MachineDataFilter
+        {
+            Secret = request.Secret,
+            MachineId = request.MachineId
+        }, cancellationToken);
 
         if (result is null)
         {
@@ -68,7 +68,7 @@ internal class AuthenticateMachineQueryHandler([FromKeyedServices(KeyedServices.
 
         var utcNow = timeProvider.GetUtcNow();
 
-        var newToken = GenerateToken(request, result);
+        var newToken = GenerateToken(request, result.Map<MachineData>());
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
         await mediator.Publish(new QueueMachineAccessTokenNotification
