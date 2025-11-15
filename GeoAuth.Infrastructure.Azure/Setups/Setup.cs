@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
-using geo_auth.Extensions;
+using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace geo_auth.Configuration;
+namespace GeoAuth.Infrastructure.Azure.Setups;
 
 public record ColumnDefiniton(string Name, int Length);
 

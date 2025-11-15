@@ -2,6 +2,7 @@
 using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Models;
+using LinqKit;
 
 namespace GeoAuth.Infrastructure.Azure.Repositories
 {
@@ -9,6 +10,8 @@ namespace GeoAuth.Infrastructure.Azure.Repositories
         where T : IMappable<TContract>, TContract
         where TDb : class, IMappable<TContract>, ITableEntity, TContract
     {
+        protected static ExpressionStarter<TDb> ExpressionBuilder => PredicateBuilder.New<TDb>();
+
         public override async Task<IEnumerable<T>> FindAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
         {
             var resultList = new List<T>();

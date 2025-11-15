@@ -1,7 +1,6 @@
-﻿using geo_auth.Handlers.MachineTokens;
-using geo_auth.Models;
+﻿using GeoAuth.Infrastructure.Models;
 
-namespace geo_auth.Configuration;
+namespace GeoAuth.Infrastructure.Azure.Setups;
 
 internal record SetupConfiguration
 {

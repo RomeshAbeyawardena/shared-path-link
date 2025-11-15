@@ -1,10 +1,7 @@
-﻿using Azure.Data.Tables;
-using geo_auth.Extensions;
-using geo_auth.Models;
+﻿using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace geo_auth.Handlers.MachineTokens;
 
@@ -15,12 +12,13 @@ internal class GetValidMachineAccessTokenQueryHandler(IMachineAccessTokenReposit
     {
         var utcNowDate = timeProvider.GetUtcNow().UtcDateTime;
 
-        var result = machineAccessTokenRepository.GetAsync(new MachineAccessTokenFilter(), cancellationToken);
+        var result = await machineAccessTokenRepository.GetAsync(new MachineAccessTokenFilter
+        {
+            FromDate = utcNowDate,
+            ToDate = utcNowDate,
+            PartitionKey = request.PartitionKey
+        }, cancellationToken);
 
-        var result = await machineAccessTokenTableClient.QueryAsync<MachineDataAccessToken>(
-            $"PartitionKey eq '{request.PartitionKey}' AND ValidFrom le datetime'{utcNowDate:O}' AND Expires ge datetime'{utcNowDate:O}'", 1, cancellationToken: cancellationToken)
-                .FirstOrDefaultAsync(cancellationToken);
-        
         if (result is null)
         {
             return null;

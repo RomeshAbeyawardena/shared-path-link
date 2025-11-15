@@ -2,7 +2,7 @@
 
 namespace GeoAuth.Shared.Requests.MachineToken
 {
-    public record GetValidMachineAccessTokenQuery(string PartitionKey) : IRequest<MachineAccessToken?>
+    public record GetValidMachineAccessTokenQuery(Guid PartitionKey) : IRequest<MachineAccessToken?>
     {
     }
 }

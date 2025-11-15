@@ -2,7 +2,7 @@
 using Azure.Storage.Queues;
 using GeoAuth.Shared;
 
-namespace geo_auth.Extensions;
+namespace GeoAuth.Infrastructure.Azure.Extensions;
 
 public static class ServiceConfigurationExtensions
 {

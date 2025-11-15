@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Queues;
 using geo_auth.Extensions;
+using GeoAuth.Shared;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

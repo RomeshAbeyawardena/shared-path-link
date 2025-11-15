@@ -1,4 +1,4 @@
-﻿namespace geo_auth.Configuration;
+﻿namespace GeoAuth.Infrastructure.Azure.Setups;
 
 public record ServiceStatus(string Key, Type Type, bool? Exists, Exception? Exception = null)
 {

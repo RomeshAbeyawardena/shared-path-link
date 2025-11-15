@@ -1,10 +1,11 @@
-﻿using geo_auth.Handlers.MachineTokens;
+﻿using GeoAuth.Infrastructure.Filters;
+using GeoAuth.Infrastructure.Models;
 using GeoAuth.Infrastructure.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace geo_auth.Configuration;
+namespace GeoAuth.Infrastructure.Azure.Setups;
 
 internal class DevelopmentSetup(IMachineRepository machineRepository,
     IOptions<SetupConfiguration> options, IHostEnvironment hostEnvironment, ILogger<DevelopmentSetup> logger) : ISetup
@@ -26,16 +27,21 @@ internal class DevelopmentSetup(IMachineRepository machineRepository,
         }
 
         var clonedMachineData = new MachineData {
-            PartitionKey = string.Empty,
-            RowKey = string.Empty
+            PartitionKey = Guid.Empty,
+            RowKey = Guid.Empty
         };
 
         clonedMachineData.Map(setupConfiguration.MachineData);
 
-        var result = await machineTableClient.GetEntityIfExistsAsync<MachineData>(clonedMachineData.PartitionKey, clonedMachineData.RowKey);
-        if (!result.HasValue)
+        var result = await machineRepository.GetAsync(new MachineDataFilter
         {
-            await machineTableClient.UpsertEntityAsync(clonedMachineData);
+            RowKey = clonedMachineData.RowKey,
+            MachineId = clonedMachineData.PartitionKey
+        }, CancellationToken.None);
+
+        if (result is null)
+        {
+            await machineRepository.UpsertAsync(clonedMachineData, CancellationToken.None);
             logger.LogInformation("Development data seeded");
         }
         else

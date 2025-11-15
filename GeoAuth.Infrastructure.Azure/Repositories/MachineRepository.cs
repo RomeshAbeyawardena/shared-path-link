@@ -7,7 +7,6 @@ using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared;
 using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Models;
-using LinqKit;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
 
@@ -29,7 +28,7 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
     protected override Expression<Func<DbMachineData, bool>> BuildExpression<TFilter>(TFilter filter)
     {
         var request = ToFilter(filter) ?? throw new InvalidCastException($"Expected {nameof(MachineDataFilter)} recieved {filter.GetType().Name}");
-        var expressionBuilder = PredicateBuilder.New<DbMachineData>();
+        var expressionBuilder = ExpressionBuilder;
         expressionBuilder.Start(x => true);
 
         if (request.RowKey.HasValue)

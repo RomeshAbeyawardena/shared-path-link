@@ -34,4 +34,8 @@
         <ProjectReference Include="..\GeoAuth.Shared\GeoAuth.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Configuration\" />
+    </ItemGroup>
+
 </Project>

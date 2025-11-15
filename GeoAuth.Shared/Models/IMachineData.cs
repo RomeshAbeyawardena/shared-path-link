@@ -3,7 +3,7 @@
 public interface IMachineData : IMappable<IMachineData>
 {
     string? Secret { get; }
-    string PartitionKey { get; }
-    string RowKey { get; }
+    Guid PartitionKey { get; }
+    Guid RowKey { get; }
     DateTimeOffset? Timestamp { get; }
 }

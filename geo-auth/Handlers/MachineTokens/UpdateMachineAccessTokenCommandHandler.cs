@@ -1,22 +1,18 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using geo_auth.Extensions;
-using geo_auth.Models;
+﻿using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace geo_auth.Handlers.MachineTokens
 {
     internal class UpdateMachineAccessTokenCommandHandler(ILogger<UpdateMachineAccessTokenCommandHandler> logger,
-        [FromKeyedServices(KeyedServices.MachineAccessTokenTable)] TableClient machineAccessTokenTableClient,
+        IMachineAccessTokenRepository machineAccessTokenRepository,
         TimeProvider timeProvider) 
         : IRequestHandler<UpdateMachineAccessTokenCommand>
     {
         public async Task Handle(UpdateMachineAccessTokenCommand notification, CancellationToken cancellationToken)
         {
-            var response = await machineAccessTokenTableClient.AddEntityAsync(new MachineDataAccessToken
+            var response = await machineAccessTokenRepository.UpsertAsync(new MachineAccessToken
             {
                 PartitionKey = notification.PartitionKey,
                 RowKey = Guid.NewGuid().ToString(),
@@ -24,12 +20,11 @@ namespace geo_auth.Handlers.MachineTokens
                 ValidFrom = notification.ValidFrom,
                 Expires = notification.Expires,
                 Timestamp = timeProvider.GetUtcNow(),
-                ETag = ETag.All
             }, cancellationToken);
 
-            if (response.IsError)
+            if (!response.IsSuccess)
             {
-                logger.LogError("{status}: {reason}", response.Status, response.ReasonPhrase);
+                logger.LogError(response.Exception, "Unable to amend access token record");
             }
         }
     }
