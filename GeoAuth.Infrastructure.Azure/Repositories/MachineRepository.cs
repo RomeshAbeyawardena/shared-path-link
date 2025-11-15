@@ -6,16 +6,17 @@ using GeoAuth.Infrastructure.Models;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared;
 using GeoAuth.Shared.Extensions;
+using GeoAuth.Shared.Models;
 using LinqKit;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
 
 namespace GeoAuth.Infrastructure.Azure.Repositories;
 
-internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient) : RepositoryBase<MachineData, DbMachineData>, IMachineRepository
+internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient) 
+    : AzureTableRepositoryBase<MachineData, DbMachineData, IMachineData>(machineTableClient), IMachineRepository
 {
-    private static MachineDataFilter? ToFilter<TFilter>(TFilter filter)
-        where TFilter : IFilter
+    private static MachineDataFilter? ToFilter(IFilter filter)
     {
         if (filter is not null && filter is MachineDataFilter machineDataFilter)
         {
@@ -24,7 +25,6 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
 
         return null;
     }
-
 
     protected override Expression<Func<DbMachineData, bool>> BuildExpression<TFilter>(TFilter filter)
     {
@@ -48,36 +48,5 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
         }
 
         return expressionBuilder;
-    }
-
-    public override async Task<IEnumerable<MachineData>> FindAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
-    {
-        var machineDataList = new List<MachineData>();
-        
-        var results = machineTableClient.QueryAsync(BuildExpression(filter), 1,
-            cancellationToken: cancellationToken);
-
-        await foreach (var result in results)
-        {
-            machineDataList.Add(result.Map<MachineData>());
-        }
-
-        return machineDataList;
-    }
-
-    public override async Task<MachineData?> GetAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
-    {
-        var request = ToFilter(filter) ?? throw new InvalidCastException($"Expected {nameof(MachineDataFilter)} recieved {filter.GetType().Name}");
-
-        var query = $"PartitionKey eq '{request.MachineId}' AND Secret eq '{request.Secret?.Base64Encode()}'";
-        var result = await machineTableClient.QueryAsync<DbMachineData>(query, 1,
-            cancellationToken: cancellationToken).FirstOrDefaultAsync(cancellationToken);
-
-        if (result is not null)
-        {
-            return result.Map<MachineData>();
-        }
-
-        return null;
     }
 }
