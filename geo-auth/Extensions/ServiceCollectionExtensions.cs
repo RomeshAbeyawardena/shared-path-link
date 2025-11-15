@@ -4,30 +4,13 @@ using geo_auth.Configuration;
 using geo_auth.Handlers.MachineTokens;
 using geo_auth.Handlers.Passwords;
 using geo_auth.Handlers.Tokens;
+using GeoAuth.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace geo_auth.Extensions;
-
-public record ServiceConfiguration(Type ServiceType, bool IsEnabled);
-
-public static class KeyedServices
-{
-    public const string SetupTable = "setup-table";
-    public const string MachineAccessTokenQueue = "machine-access-token-queue";
-    public const string MachineAccessTokenTable = "machine-access-token-table";
-    public const string MachineTable = "machine-table";
-
-    public static readonly IReadOnlyDictionary<string, ServiceConfiguration> Services = new Dictionary<string, ServiceConfiguration>
-    {
-        { MachineTable, new ServiceConfiguration(typeof(TableClient), true) },
-        { MachineAccessTokenQueue, new ServiceConfiguration(typeof(QueueClient), true) },
-        { MachineAccessTokenTable, new ServiceConfiguration(typeof(TableClient), true) },
-        { SetupTable, new ServiceConfiguration(typeof(TableClient), false) }
-    };
-}
 
 public static class ServiceCollectionExtensions
 {

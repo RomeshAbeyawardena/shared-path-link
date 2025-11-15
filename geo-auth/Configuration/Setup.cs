@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using geo_auth.Extensions;
+using GeoAuth.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -42,6 +43,14 @@ internal class Setup(ILogger<Setup> logger,
         }
     }
 
+    private static Type GetServiceType(ClientType type) =>
+        type switch
+        {
+            ClientType.Table => typeof(TableClient),
+            ClientType.Queue => typeof(QueueClient),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), "Invalid client type"),
+        };
+
     private static async Task CreateIfNotExistsAsync(object client)
     {
         if (client is TableClient tableClient)
@@ -80,7 +89,7 @@ internal class Setup(ILogger<Setup> logger,
     }
 
     private Task<SetupTableEntity?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<SetupTableEntity>(
-            $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.ServiceType.Name}'", 1)
+            $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.GetServiceType().Name}'", 1)
             .FirstOrDefaultAsync();
 
     private async Task<bool> GetEntityStatusAsync(string key, 
@@ -98,7 +107,7 @@ internal class Setup(ILogger<Setup> logger,
             var response = await setupTableClient.UpsertEntityAsync(new SetupTableEntity
             {
                 RowKey = key,
-                PartitionKey = serviceConfiguration.ServiceType.Name,
+                PartitionKey = serviceConfiguration.GetServiceType().Name,
                 Timestamp = timeProvider.GetUtcNow(),
                 ETag = ETag.All
             });
@@ -116,7 +125,7 @@ internal class Setup(ILogger<Setup> logger,
         var healthCheckStatuses = new Dictionary<string, ServiceStatus>();
         foreach(var (key, config) in KeyedServices.Services)
         {
-            var client = services.GetRequiredKeyedService(config.ServiceType, key);
+            var client = services.GetRequiredKeyedService(config.GetServiceType(), key);
             var result = await CheckHealthAsync(key, client);
             if (result is null)
             {
@@ -195,16 +204,17 @@ internal class Setup(ILogger<Setup> logger,
         logger.LogInformation("Registered key services: {count}", KeyedServices.Services.Count);
         foreach (var (key, config) in KeyedServices.Services)
         {
-            logger.LogInformation("Setting up: {key} of {type}", key, config.ServiceType.Name);
+            var serviceType = config.GetServiceType();
+            logger.LogInformation("Setting up: {key} of {type}", key, serviceType);
             if (!config.IsEnabled 
                 || await GetEntityStatusAsync(key, config)
-                || config.ServiceType == typeof(TableClient) && !setupConfiguration.IncludeTables
-                || config.ServiceType == typeof(QueueClient) && !setupConfiguration.IncludeQueues)
+                || config.Type == ClientType.Table && !setupConfiguration.IncludeTables
+                || config.Type == ClientType.Queue && !setupConfiguration.IncludeQueues)
             {
-                logger.LogWarning("{key} of {type} skipped", key, config.ServiceType.Name);
+                logger.LogWarning("{key} of {type} skipped", key, serviceType);
                 continue;
             }
-            var client = services.GetRequiredKeyedService(config.ServiceType, key);
+            var client = services.GetRequiredKeyedService(serviceType, key);
             await CreateIfNotExistsAsync(client);
             await SetEntityStatusAsync(key, config);
             configuredServicesCount++;
