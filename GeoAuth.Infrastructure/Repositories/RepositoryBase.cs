@@ -1,4 +1,5 @@
 ﻿
+using GeoAuth.Shared.Models;
 using System.Linq.Expressions;
 
 namespace GeoAuth.Infrastructure.Repositories;
@@ -9,4 +10,5 @@ public abstract class RepositoryBase<T, TDb> : IRepository<T>
         where TFilter : IFilter;
     public abstract Task<IEnumerable<T>> FindAsync<TFilter>(TFilter filter, CancellationToken cancellationToken) where TFilter : IFilter;
     public abstract Task<T?> GetAsync<TFilter>(TFilter filter, CancellationToken cancellationToken) where TFilter : IFilter;
+    public abstract Task<IResult<int>> UpsertAsync(T entry, CancellationToken cancellationToken);
 }

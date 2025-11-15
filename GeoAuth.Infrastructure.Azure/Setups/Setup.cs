@@ -3,6 +3,7 @@ using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Shared;
+using GeoAuth.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

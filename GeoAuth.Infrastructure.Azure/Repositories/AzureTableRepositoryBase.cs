@@ -39,5 +39,17 @@ namespace GeoAuth.Infrastructure.Azure.Repositories
 
             return default;
         }
+
+        public override async Task<IResult<int>> UpsertAsync(T entry, CancellationToken cancellationToken)
+        {
+            using var result = await tableClient.UpsertEntityAsync(entry.Map<TDb>(), cancellationToken: cancellationToken);
+
+            if (result.IsError)
+            {
+                return Result.Failed<int>(new Exception($"{result.Status}: {result.ReasonPhrase}"));
+            }
+
+            return Result.Sucessful(result.Status);
+        }
     }
 }

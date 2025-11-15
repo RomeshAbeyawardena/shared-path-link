@@ -6,15 +6,15 @@ public record MachineData : Shared.Models.Records.MappableBase<IMachineData>, IM
 {
     protected override IMachineData Source => this;
     public string? Secret { get; set; }
-    public Guid PartitionKey { get; set; } = default!;
-    public Guid RowKey { get; set; } = default!;
+    public Guid MachineId { get; set; } = default!;
+    public Guid Id { get; set; } = default!;
     public DateTimeOffset? Timestamp { get; set; }
 
     public override void Map(IMachineData source)
     {
         Secret = source.Secret;
-        PartitionKey = source.PartitionKey;
-        RowKey = source.RowKey;
+        MachineId = source.MachineId;
+        Id = source.Id;
         Timestamp = source.Timestamp;
     }
 }

@@ -33,7 +33,7 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
 
         if (request.RowKey.HasValue)
         {
-            expressionBuilder.And(x => x.RowKey == request.RowKey.ToString());
+            expressionBuilder.And(x => x. == request.MachineId.ToString());
         }
 
         if (request.MachineId.HasValue)
