@@ -1,14 +1,12 @@
-﻿using Azure.Data.Tables;
-using geo_auth.Extensions;
-using geo_auth.Models;
-using Microsoft.Extensions.DependencyInjection;
+﻿using geo_auth.Handlers.MachineTokens;
+using GeoAuth.Infrastructure.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace geo_auth.Configuration;
 
-internal class DevelopmentSetup([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient,
+internal class DevelopmentSetup(IMachineRepository machineRepository,
     IOptions<SetupConfiguration> options, IHostEnvironment hostEnvironment, ILogger<DevelopmentSetup> logger) : ISetup
 {
     public async Task RunOnceAsync(SetupConfiguration? setupConfiguration = null)

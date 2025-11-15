@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageReference Include="LinqKit" Version="1.3.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoAuth.Infrastructure\GeoAuth.Infrastructure.csproj" />

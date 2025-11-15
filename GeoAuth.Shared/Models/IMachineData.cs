@@ -1,6 +1,4 @@
-﻿using GeoAuth.Shared.Models;
-
-namespace GeoAuth.Infrastructure.Models;
+﻿namespace GeoAuth.Shared.Models;
 
 public interface IMachineData : IMappable<IMachineData>
 {

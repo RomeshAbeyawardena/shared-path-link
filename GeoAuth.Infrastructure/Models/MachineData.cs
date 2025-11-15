@@ -1,4 +1,6 @@
-﻿namespace GeoAuth.Infrastructure.Models;
+﻿using GeoAuth.Shared.Models;
+
+namespace GeoAuth.Infrastructure.Models;
 
 public record MachineData : Shared.Models.Records.MappableBase<IMachineData>, IMachineData
 {
