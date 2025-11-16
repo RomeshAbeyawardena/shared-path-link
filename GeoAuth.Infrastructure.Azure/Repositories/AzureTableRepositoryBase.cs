@@ -59,7 +59,7 @@ namespace GeoAuth.Infrastructure.Azure.Repositories
         {
             var mappedEntry = entry.Map<TDb>();
 
-            mappedEntry.RowKey ??= Guid.NewGuid().ToString();
+            mappedEntry.Id ??= Guid.NewGuid().ToString();
 
             mappedEntry.Timestamp = timeProvider.GetUtcNow();
             mappedEntry.ETag = ETag.All;

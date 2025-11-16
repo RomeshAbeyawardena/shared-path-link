@@ -1,5 +1,6 @@
 ﻿using geo_auth.Configuration;
 using GeoAuth.Shared.Exceptions;
+using GeoAuth.Shared.Features.Machines;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth.Handlers.Tokens;
 
-internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions) : IRequestHandler<ValidateAccessTokenQuery, ValidateAccessTokenResponse>
+internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions, IMediator mediator) 
+    : IRequestHandler<ValidateAccessTokenQuery, ValidateAccessTokenResponse>
 {
     public async Task<ValidateAccessTokenResponse> Handle(ValidateAccessTokenQuery request, CancellationToken cancellationToken)
     {
@@ -43,16 +45,17 @@ internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> toke
                 throw defaultException;
             }
 
-            if (!result.Claims.TryGetValue("parition-key", out var paritionKey))
+            if (!result.Claims.TryGetValue("machine-id", out var machineId) || !Guid.TryParse(machineId?.ToString(), out var id))
             {
                 throw defaultException;
             }
 
-            if (!result.Claims.TryGetValue("row-key", out var rowKey))
+            if (!result.Claims.TryGetValue("machine-key", out var machineKey) || !Guid.TryParse(machineId?.ToString(), out var mKey))
             {
                 throw defaultException;
             }
 
+            var machine = await mediator.Send(new GetMachineQuery { Id = id, MachineId = mKey }, cancellationToken) ?? throw defaultException;
             var scopeList = new List<string>();
             if (result.Claims.TryGetValue("scopes", out var scopes))
             {

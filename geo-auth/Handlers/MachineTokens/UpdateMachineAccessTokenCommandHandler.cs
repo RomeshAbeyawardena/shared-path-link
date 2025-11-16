@@ -14,8 +14,8 @@ namespace geo_auth.Handlers.MachineTokens
         {
             var response = await machineAccessTokenRepository.UpsertAsync(new MachineAccessToken
             {
-                PartitionKey = notification.PartitionKey,
-                RowKey = Guid.NewGuid().ToString(),
+                MachineId = notification.PartitionKey,
+                Id = Guid.NewGuid().ToString(),
                 Token = notification.Token,
                 ValidFrom = notification.ValidFrom,
                 Expires = notification.Expires,

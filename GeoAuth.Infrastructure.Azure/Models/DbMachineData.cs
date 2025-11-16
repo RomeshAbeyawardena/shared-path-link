@@ -1,12 +1,12 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using GeoAuth.Shared.Models;
+using GeoAuth.Shared.Extensions;
 
 namespace GeoAuth.Infrastructure.Azure.Models;
 
 public class DbMachineData : MappableBase<IMachineData>, IMachineData, ITableEntity
 {
-    private static Guid GetGuid(string value) => string.IsNullOrWhiteSpace(value) || !Guid.TryParse(value, out var id) ? Guid.Empty : id;
     protected override IMachineData Source => this;
     public string? Secret { get; set; }
     
@@ -14,8 +14,8 @@ public class DbMachineData : MappableBase<IMachineData>, IMachineData, ITableEnt
     public ETag ETag { get; set; }
     public string PartitionKey { get; set; } = default!;
     public string RowKey { get; set; } = default!;
-    Guid IMachineData.MachineId { get => GetGuid(PartitionKey); }
-    Guid IMachineData.Id { get => GetGuid(RowKey); }
+    Guid IMachineData.MachineId { get => this.GetGuid(PartitionKey); }
+    Guid IMachineData.Id { get => this.GetGuid(RowKey); }
 
     public override void Map(IMachineData source)
     {

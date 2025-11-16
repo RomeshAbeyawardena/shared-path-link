@@ -5,8 +5,8 @@
         string? Token { get; }
         DateTimeOffset ValidFrom { get; }
         DateTimeOffset Expires { get; }
-        string PartitionKey { get; }
-        string RowKey { get; }
+        Guid MachineId { get; }
+        Guid Id { get; }
         DateTimeOffset? Timestamp { get; }
     }
 }

@@ -8,8 +8,8 @@ public record MachineDataAccessToken : GeoAuth.Shared.Models.Records.MappableBas
     public string? Token { get; set; }
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset Expires { get; set; }
-    public required string PartitionKey { get; set; }
-    public string RowKey { get; set; } = default!;
+    public required string MachineId { get; set; }
+    public string Id { get; set; } = default!;
     public DateTimeOffset? Timestamp { get; set; }
 
     public override void Map(IMachineAccessToken source)
@@ -17,8 +17,8 @@ public record MachineDataAccessToken : GeoAuth.Shared.Models.Records.MappableBas
         Token = source.Token;
         ValidFrom = source.ValidFrom;
         Expires = source.Expires;
-        PartitionKey = source.PartitionKey;
-        RowKey = source.RowKey;
+        MachineId = source.MachineId;
+        Id = source.Id;
         Timestamp = source.Timestamp;
     }
 }

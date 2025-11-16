@@ -8,8 +8,8 @@ namespace GeoAuth.Shared.Requests.MachineToken
         public string? Token { get; set; }
         public DateTimeOffset ValidFrom { get; set; }
         public DateTimeOffset Expires { get; set; }
-        public required string PartitionKey { get; set; }
-        public required string RowKey { get; set; }
+        public required string MachineId { get; set; }
+        public required string Id { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
 
         public override void Map(IMachineAccessToken source)
@@ -17,8 +17,8 @@ namespace GeoAuth.Shared.Requests.MachineToken
             Token = source.Token;
             ValidFrom = source.ValidFrom;
             Expires = source.Expires;
-            PartitionKey = source.PartitionKey;
-            RowKey = source.RowKey;
+            MachineId = source.MachineId;
+            Id = source.Id;
             Timestamp = source.Timestamp;
         }
     }

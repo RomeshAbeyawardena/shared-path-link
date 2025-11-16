@@ -33,12 +33,12 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
 
         if (request.Id.HasValue)
         {
-            expressionBuilder.And(x => x.RowKey == request.Id.ToString());
+            expressionBuilder.And(x => x.Id == request.Id.ToString());
         }
 
         if (request.MachineId.HasValue)
         {
-            expressionBuilder.And(x => x.PartitionKey == request.MachineId.ToString());
+            expressionBuilder.And(x => x.MachineId == request.MachineId.ToString());
         }
 
         if (!string.IsNullOrWhiteSpace(request.Secret))
