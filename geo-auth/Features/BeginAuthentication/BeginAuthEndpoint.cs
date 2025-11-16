@@ -1,9 +1,9 @@
-﻿using geo_auth.Handlers.Tokens;
+﻿using geo_auth.Features.BeginAuthentication;
+using geo_auth.Features.ValidateRequest;
 using geo_auth.Models;
 using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Extensions;
-using GeoAuth.Shared.Requests.Input;
-using GeoAuth.Shared.Requests.MachineToken;
+using GeoAuth.Shared.Features.BeginAuthentication;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;

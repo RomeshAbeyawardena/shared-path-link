@@ -1,8 +1,8 @@
-﻿using geo_auth.Handlers.Passwords;
+﻿using geo_auth.Features.ValidateRequest;
+using geo_auth.Handlers.Passwords;
 using geo_auth.Models;
 using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Extensions;
-using GeoAuth.Shared.Requests.Input;
 using GeoAuth.Shared.Requests.Passwords;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;

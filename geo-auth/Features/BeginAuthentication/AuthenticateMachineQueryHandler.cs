@@ -1,8 +1,9 @@
 ﻿using geo_auth.Configuration;
-using geo_auth.Models;
+using geo_auth.Handlers.MachineTokens;
 using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Exceptions;
+using GeoAuth.Shared.Features.BeginAuthentication;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace geo_auth.Handlers.MachineTokens;
+namespace geo_auth.Features.BeginAuthentication;
 
 internal class AuthenticateMachineQueryHandler(IMachineRepository machineRepository,
     TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions,

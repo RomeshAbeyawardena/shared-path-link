@@ -1,11 +1,10 @@
 ﻿using GeoAuth.Shared.Exceptions;
-using GeoAuth.Shared.Requests.Input;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Text;
 
-namespace geo_auth.Handlers.Input
+namespace geo_auth.Features.ValidateRequest
 {
     internal class ValidateRequestCommandHandler(ILogger<ValidateRequestCommandHandler> logger) : IRequestHandler<ValidateRequestCommand, ValidateRequestResult>
     {

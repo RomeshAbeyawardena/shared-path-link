@@ -1,6 +1,8 @@
 ﻿using Azure.Data.Tables;
 using GeoAuth.Infrastructure.Azure.Configuration;
+using GeoAuth.Infrastructure.Azure.Repositories;
 using GeoAuth.Infrastructure.Azure.Setups;
+using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +49,9 @@ public static class ServiceCollectionExtensions
 
             return new TableClient(valuesConfiguration.AzureWebJobsStorage,
                 setupTableConfiguration.SetupTableName);
-        });
+        })
+        .AddTransient<IMachineRepository, MachineRepository>()
+        .AddTransient<IMachineAccessTokenRepository, MachineAccessTokenRepository>();
     }
 
     public static IServiceCollection ConfigureDataOptions(this IServiceCollection services, IConfiguration configuration)

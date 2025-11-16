@@ -1,11 +1,8 @@
-﻿using geo_auth.Models;
+﻿using geo_auth.Handlers.Tokens;
+using geo_auth.Models;
 using System.Text.Json.Serialization;
 
-namespace geo_auth.Handlers.Tokens;
-
-public record AuthTokenResult(string? Token) : IAuthTokenResult
-{
-}
+namespace geo_auth.Features.BeginAuthentication;
 
 internal record AuthTokenResponse : MappableStandardResponse<IAuthTokenResult, AuthTokenResponse>, IAuthTokenResult
 {

@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace geo_auth.Handlers.Tokens;
+namespace geo_auth.Features.BeginAuthentication;
 
 internal class ValidateMachineTokenQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions, 
     ILogger<ValidateMachineTokenQueryHandler> logger) : IRequestHandler<ValidateMachineTokenQuery, MachineTokenQueryResult>

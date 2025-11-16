@@ -1,6 +1,7 @@
-﻿using MediatR;
+﻿using GeoAuth.Shared.Requests.MachineToken;
+using MediatR;
 
-namespace GeoAuth.Shared.Requests.MachineToken;
+namespace GeoAuth.Shared.Features.BeginAuthentication;
 
 public record AuthenticateMachineQuery(Guid? MachineId, string? Secret) : IRequest<AuthenticateMachineResult>
 {
