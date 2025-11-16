@@ -40,7 +40,7 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
                     { "row-key", request.Id },
                     { "scopes",  query.Scopes ?? string.Empty }
                 };
-        descriptor.Expires = utcNow.UtcDateTime;
+        descriptor.Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2));
         descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var handler = new JsonWebTokenHandler();
