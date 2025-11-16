@@ -26,17 +26,14 @@ internal class DevelopmentSetup(IMachineRepository machineRepository,
             return;
         }
 
-        var clonedMachineData = new MachineData {
-            PartitionKey = Guid.Empty,
-            RowKey = Guid.Empty
-        };
+        var clonedMachineData = new MachineData();
 
         clonedMachineData.Map(setupConfiguration.MachineData);
 
         var result = await machineRepository.GetAsync(new MachineDataFilter
         {
-            RowKey = clonedMachineData.RowKey,
-            MachineId = clonedMachineData.PartitionKey
+            RowKey = clonedMachineData.Id,
+            MachineId = clonedMachineData.MachineId
         }, CancellationToken.None);
 
         if (result is null)

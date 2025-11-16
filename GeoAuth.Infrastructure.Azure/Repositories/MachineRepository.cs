@@ -31,9 +31,9 @@ internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)]
         var expressionBuilder = ExpressionBuilder;
         expressionBuilder.Start(x => true);
 
-        if (request.RowKey.HasValue)
+        if (request.Id.HasValue)
         {
-            expressionBuilder.And(x => x. == request.MachineId.ToString());
+            expressionBuilder.And(x => x.RowKey == request.Id.ToString());
         }
 
         if (request.MachineId.HasValue)
