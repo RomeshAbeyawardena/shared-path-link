@@ -10,7 +10,6 @@ namespace GeoAuth.Shared.Requests.MachineToken
         public DateTimeOffset Expires { get; set; }
         public Guid MachineId { get; set; }
         public Guid Id { get; set; }
-        public DateTimeOffset? Timestamp { get; set; }
 
         public override void Map(IMachineAccessToken source)
         {
@@ -19,7 +18,6 @@ namespace GeoAuth.Shared.Requests.MachineToken
             Expires = source.Expires;
             MachineId = source.MachineId;
             Id = source.Id;
-            Timestamp = source.Timestamp;
         }
     }
 }

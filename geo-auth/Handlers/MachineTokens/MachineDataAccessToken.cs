@@ -10,7 +10,6 @@ public record MachineDataAccessToken : GeoAuth.Shared.Models.Records.MappableBas
     public DateTimeOffset Expires { get; set; }
     public Guid MachineId { get; set; }
     public Guid Id { get; set; } = default!;
-    public DateTimeOffset? Timestamp { get; set; }
 
     public override void Map(IMachineAccessToken source)
     {
@@ -19,6 +18,5 @@ public record MachineDataAccessToken : GeoAuth.Shared.Models.Records.MappableBas
         Expires = source.Expires;
         MachineId = source.MachineId;
         Id = source.Id;
-        Timestamp = source.Timestamp;
     }
 }

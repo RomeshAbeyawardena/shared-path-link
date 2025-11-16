@@ -7,6 +7,5 @@
         DateTimeOffset Expires { get; }
         Guid MachineId { get; }
         Guid Id { get; }
-        DateTimeOffset? Timestamp { get; }
     }
 }

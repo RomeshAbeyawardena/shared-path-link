@@ -26,6 +26,5 @@ public class DbMachineDataAccessToken : MappableBase<IMachineAccessToken>, IMach
         Expires = source.Expires;
         PartitionKey = source.MachineId.ToString();
         RowKey = source.Id.ToString();
-        Timestamp = source.Timestamp;
     }
 }
