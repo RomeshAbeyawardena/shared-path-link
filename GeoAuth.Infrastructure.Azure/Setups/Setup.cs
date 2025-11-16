@@ -88,8 +88,7 @@ internal class Setup(ILogger<Setup> logger,
     private async Task<bool> GetEntityStatusAsync(string key, 
         ServiceConfiguration serviceConfiguration)
     {
-        var result = await GetSetupTableEntity(key, serviceConfiguration);
-        return result is not null;
+        return await GetSetupTableEntity(key, serviceConfiguration) is not null;
     }
 
     private async Task SetEntityStatusAsync(string key, ServiceConfiguration serviceConfiguration)

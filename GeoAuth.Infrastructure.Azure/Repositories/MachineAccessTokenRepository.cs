@@ -58,6 +58,6 @@ internal class MachineAccessTokenRepository([FromKeyedServices(KeyedServices.Mac
             expressionBuilder.And(target);
         }
 
-        return ExpressionBuilder;
+        return expressionBuilder;
     }
 }

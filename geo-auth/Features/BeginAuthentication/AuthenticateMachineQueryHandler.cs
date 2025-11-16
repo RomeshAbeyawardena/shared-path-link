@@ -3,6 +3,7 @@ using geo_auth.Handlers.MachineTokens;
 using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Exceptions;
+using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Features.BeginAuthentication;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
@@ -50,7 +51,7 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
     {
         var result = await machineRepository.GetAsync(new MachineDataFilter
         {
-            Secret = request.Secret,
+            Secret = request.Secret?.Base64Encode(),
             MachineId = request.MachineId
         }, cancellationToken);
 
