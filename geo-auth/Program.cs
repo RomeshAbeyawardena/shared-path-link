@@ -1,5 +1,6 @@
 using geo_auth.Configuration;
 using geo_auth.Extensions;
+using GeoAuth.Infrastructure.Azure.Setups;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +31,7 @@ var setup = app.Services.GetRequiredKeyedService<ISetup>(string.Empty);
 
 await setup.RunOnceAsync();
 
-if (setup is Setup defaultSetup)
+if (setup is IHealthCheckSetup defaultSetup)
 {
     var healthCheck = await defaultSetup.HealthCheckAsync();
     defaultSetup.BuildHealthCheckTable(healthCheck);

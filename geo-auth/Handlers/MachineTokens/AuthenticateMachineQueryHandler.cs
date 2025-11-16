@@ -34,8 +34,8 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         descriptor.Audience = tokenConfiguration.ValidAudience;
         descriptor.Claims = new Dictionary<string, object>
                 {
-                    { "partition-key", request.PartitionKey },
-                    { "row-key", request.RowKey },
+                    { "machine-id", request.MachineId },
+                    { "row-key", request.Id },
                     { "scopes",  query.Scopes ?? string.Empty }
                 };
         descriptor.Expires = utcNow.UtcDateTime;
@@ -58,7 +58,7 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
             return new AuthenticateMachineResult(null, new ResponseException("Machine authentication failed", StatusCodes.Status401Unauthorized));
         }
 
-        var accessToken = await mediator.Send(new GetValidMachineAccessTokenQuery(result.PartitionKey), cancellationToken);
+        var accessToken = await mediator.Send(new GetValidMachineAccessTokenQuery(result.MachineId), cancellationToken);
 
         if (accessToken is not null)
         {

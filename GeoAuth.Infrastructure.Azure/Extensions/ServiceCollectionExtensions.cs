@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         });
     }
 
-    public static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureDataOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<MachineTokenTableConfiguration>()
             .Bind(configuration.GetSection("machine"))

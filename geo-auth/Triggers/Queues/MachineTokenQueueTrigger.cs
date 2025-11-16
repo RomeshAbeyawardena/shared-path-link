@@ -1,4 +1,5 @@
-﻿using geo_auth.Models;
+﻿using geo_auth.Handlers.MachineTokens;
+using geo_auth.Models;
 using GeoAuth.Shared.Requests.MachineToken;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;

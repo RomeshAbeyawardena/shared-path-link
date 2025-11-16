@@ -19,10 +19,17 @@ public interface ISetup
     Task RunOnceAsync();
 }
 
+public interface IHealthCheckSetup : ISetup
+{
+    Task<IReadOnlyDictionary<string, ServiceStatus>> HealthCheckAsync();
+    void BuildHealthCheckTable(IReadOnlyDictionary<string, ServiceStatus> serviceStatus);
+    bool DetectAndLogFailures(IReadOnlyDictionary<string, ServiceStatus> serviceStatuses);
+}
+
 internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
     [FromKeyedServices(KeyedServices.SetupTable)] TableClient setupTableClient,
-    TimeProvider timeProvider, IServiceProvider services) : ISetup
+    TimeProvider timeProvider, IServiceProvider services) : IHealthCheckSetup
 {
     private bool hasRun = false;
     private readonly ReaderWriterLockSlim hasRunLock = new(LockRecursionPolicy.NoRecursion);

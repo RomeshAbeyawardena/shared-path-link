@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Queues;
 using geo_auth.Configuration;
 using GeoAuth.Infrastructure.Azure.Configuration;
+using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,26 +15,27 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
         return services
+            .AddDataServices()
             .AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
             {
                 PropertyNameCaseInsensitive = true
             })
-        .AddSingleton(TimeProvider.System)
-        .AddKeyedTransient(KeyedServices.MachineAccessTokenQueue, (s, key) =>
-        {
-            var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
-                .Value;
-
-            var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
-                .Value;
-
-            var queueClient = new QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName, new QueueClientOptions
+            .AddSingleton(TimeProvider.System)
+            .AddKeyedTransient(KeyedServices.MachineAccessTokenQueue, (s, key) =>
             {
-                MessageEncoding = QueueMessageEncoding.Base64
-            });
+                var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
+                    .Value;
 
-            return queueClient;
-        });
+                var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
+                    .Value;
+
+                var queueClient = new QueueClient(valuesConfiguration.AzureWebJobsStorage, machineTokenTableConfiguration.MachineAccessTokenQueueName, new QueueClientOptions
+                {
+                    MessageEncoding = QueueMessageEncoding.Base64
+                });
+
+                return queueClient;
+            });
     }
 
     public static IServiceCollection RegisterHandlers(this IServiceCollection services)
@@ -43,7 +45,9 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptions<PasswordConfiguration>()
+        services
+            .ConfigureDataOptions(configuration)
+            .AddOptions<PasswordConfiguration>()
             .Bind(configuration.GetSection("password"))
             .ValidateOnStart();
 
