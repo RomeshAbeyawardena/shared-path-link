@@ -1,8 +1,8 @@
 ﻿using Azure;
+using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using GeoAuth.Infrastructure.Azure.Extensions;
-using GeoAuth.Infrastructure.Azure.Models;
 using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Models;
 using GeoAuth.Infrastructure.Repositories;
@@ -21,7 +21,7 @@ public record ColumnDefiniton(string Name, int Length);
 internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
     ISetupRepository setupRepository,
-    TimeProvider timeProvider, IServiceProvider services) : IHealthCheckSetup
+    IServiceProvider services) : IHealthCheckSetup
 {
     private bool hasRun = false;
     private readonly ReaderWriterLockSlim hasRunLock = new(LockRecursionPolicy.NoRecursion);
@@ -88,7 +88,8 @@ internal class Setup(ILogger<Setup> logger,
     private async Task<bool> GetEntityStatusAsync(string key, 
         ServiceConfiguration serviceConfiguration)
     {
-        return await GetSetupTableEntity(key, serviceConfiguration) is not null;
+        var result = await GetSetupTableEntity(key, serviceConfiguration);
+        return result is not null;
     }
 
     private async Task SetEntityStatusAsync(string key, ServiceConfiguration serviceConfiguration)
@@ -100,7 +101,8 @@ internal class Setup(ILogger<Setup> logger,
             var response = await setupRepository.UpsertAsync(new SetupEntity
             {
                 Key = key,
-                Type = serviceConfiguration.GetServiceType().Name
+                Type = serviceConfiguration.GetServiceType().Name,
+                IsEnabled = serviceConfiguration.IsEnabled
             }, CancellationToken.None);
 
             if (!response.IsSuccess)

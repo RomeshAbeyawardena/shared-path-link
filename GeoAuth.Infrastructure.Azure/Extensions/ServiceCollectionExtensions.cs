@@ -52,7 +52,8 @@ public static class ServiceCollectionExtensions
                 setupTableConfiguration.SetupTableName);
         })
         .AddTransient<IMachineRepository, MachineRepository>()
-        .AddTransient<IMachineAccessTokenRepository, MachineAccessTokenRepository>();
+        .AddTransient<IMachineAccessTokenRepository, MachineAccessTokenRepository>()
+        .AddTransient<ISetupRepository, SetupTableRepository>();
     }
 
     public static IServiceCollection ConfigureDataOptions(this IServiceCollection services, IConfiguration configuration)
