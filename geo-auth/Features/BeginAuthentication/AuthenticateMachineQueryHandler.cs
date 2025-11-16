@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth.Features.BeginAuthentication;
 
@@ -31,7 +32,6 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         var utcNow = timeProvider.GetUtcNow();
 
         var descriptor = new SecurityTokenDescriptor();
-
         descriptor.Issuer = tokenConfiguration.ValidAudience;
         descriptor.Audience = tokenConfiguration.ValidAudience;
         descriptor.Claims = new Dictionary<string, object>
@@ -40,11 +40,13 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
                     { "row-key", request.Id },
                     { "scopes",  query.Scopes ?? string.Empty }
                 };
+        descriptor.NotBefore = utcNow.UtcDateTime;
         descriptor.Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2));
         descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var handler = new JsonWebTokenHandler();
-        return handler.CreateToken(descriptor);
+        
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.CreateJwtSecurityToken(descriptor);
+        return token.ToString();
     }
 
     public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)

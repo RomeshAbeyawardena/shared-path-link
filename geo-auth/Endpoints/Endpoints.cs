@@ -16,7 +16,8 @@ public static partial class Endpoints
             && Guid.TryParse(automationIdValue, out var id) ? id : null;
     }
 
-    public static async Task<IResult?> AuthoriseOrFail(HttpRequest request, CancellationToken cancellationToken, IMediator? mediator = null, params string[] acceptableScopes)
+    public static async Task<IResult?> AuthoriseOrFail(HttpRequest request, CancellationToken cancellationToken, 
+        IMediator? mediator = null, params string[] acceptableScopes)
     {
         try
         {
