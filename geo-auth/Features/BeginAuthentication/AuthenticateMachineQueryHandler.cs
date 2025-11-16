@@ -78,8 +78,7 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
             Expires = utcNow.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
             Token = newToken,
             ValidFrom = utcNow,
-            PartitionKey = request.MachineId.GetValueOrDefault().ToString(),
-            
+            MachineId = request.MachineId.GetValueOrDefault().ToString(),
         }, cancellationToken);
         
         return new AuthenticateMachineResult(new MachineToken(newToken));

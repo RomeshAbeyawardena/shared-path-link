@@ -6,8 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace geo_auth.Handlers.MachineTokens
 {
     internal class UpdateMachineAccessTokenCommandHandler(ILogger<UpdateMachineAccessTokenCommandHandler> logger,
-        IMachineAccessTokenRepository machineAccessTokenRepository,
-        TimeProvider timeProvider) 
+        IMachineAccessTokenRepository machineAccessTokenRepository) 
         : IRequestHandler<UpdateMachineAccessTokenCommand>
     {
         public async Task Handle(UpdateMachineAccessTokenCommand notification, CancellationToken cancellationToken)
@@ -18,8 +17,7 @@ namespace geo_auth.Handlers.MachineTokens
                 Id = Guid.NewGuid(),
                 Token = notification.Token,
                 ValidFrom = notification.ValidFrom,
-                Expires = notification.Expires,
-                Timestamp = timeProvider.GetUtcNow(),
+                Expires = notification.Expires
             }, cancellationToken);
 
             if (!response.IsSuccess)
@@ -29,3 +27,4 @@ namespace geo_auth.Handlers.MachineTokens
         }
     }
 }
+
