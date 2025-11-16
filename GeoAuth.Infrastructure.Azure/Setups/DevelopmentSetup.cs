@@ -1,6 +1,7 @@
 ﻿using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Models;
 using GeoAuth.Infrastructure.Repositories;
+using GeoAuth.Infrastructure.Setups;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

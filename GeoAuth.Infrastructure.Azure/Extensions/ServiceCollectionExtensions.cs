@@ -3,6 +3,7 @@ using GeoAuth.Infrastructure.Azure.Configuration;
 using GeoAuth.Infrastructure.Azure.Repositories;
 using GeoAuth.Infrastructure.Azure.Setups;
 using GeoAuth.Infrastructure.Repositories;
+using GeoAuth.Infrastructure.Setups;
 using GeoAuth.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

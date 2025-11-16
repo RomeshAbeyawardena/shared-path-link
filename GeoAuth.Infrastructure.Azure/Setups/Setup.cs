@@ -2,10 +2,12 @@
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using GeoAuth.Infrastructure.Azure.Extensions;
+using GeoAuth.Infrastructure.Azure.Models;
+using GeoAuth.Infrastructure.Models;
+using GeoAuth.Infrastructure.Setups;
 using GeoAuth.Shared;
 using GeoAuth.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -13,18 +15,6 @@ using System.Text;
 namespace GeoAuth.Infrastructure.Azure.Setups;
 
 public record ColumnDefiniton(string Name, int Length);
-
-public interface ISetup
-{
-    Task RunOnceAsync();
-}
-
-public interface IHealthCheckSetup : ISetup
-{
-    Task<IReadOnlyDictionary<string, ServiceStatus>> HealthCheckAsync();
-    void BuildHealthCheckTable(IReadOnlyDictionary<string, ServiceStatus> serviceStatus);
-    bool DetectAndLogFailures(IReadOnlyDictionary<string, ServiceStatus> serviceStatuses);
-}
 
 internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
@@ -50,14 +40,6 @@ internal class Setup(ILogger<Setup> logger,
             hasRunLock.ExitWriteLock();
         }
     }
-
-    private static Type GetServiceType(ClientType type) =>
-        type switch
-        {
-            ClientType.Table => typeof(TableClient),
-            ClientType.Queue => typeof(QueueClient),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), "Invalid client type"),
-        };
 
     private static async Task CreateIfNotExistsAsync(object client)
     {
@@ -96,7 +78,7 @@ internal class Setup(ILogger<Setup> logger,
         }
     }
 
-    private Task<SetupTableEntity?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<SetupTableEntity>(
+    private Task<DbSetup?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<DbSetup>(
             $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.GetServiceType().Name}'", 1)
             .FirstOrDefaultAsync();
 
@@ -112,7 +94,7 @@ internal class Setup(ILogger<Setup> logger,
 
         if (entity is null)
         {
-            var response = await setupTableClient.UpsertEntityAsync(new SetupTableEntity
+            var response = await setupTableClient.UpsertEntityAsync(new DbSetup
             {
                 RowKey = key,
                 PartitionKey = serviceConfiguration.GetServiceType().Name,
