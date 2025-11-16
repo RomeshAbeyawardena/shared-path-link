@@ -31,7 +31,7 @@ internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> toke
                 ValidateAudience = true,
                 ValidAudience = tokenConfiguration.ValidAudience,
                 ValidateIssuer = true,
-                ValidIssuer = tokenConfiguration.ValidIssuer,
+                ValidIssuer = tokenConfiguration.ValidAudience,
                 ValidateIssuerSigningKey = true,
                 ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
                 IssuerSigningKey = key,
@@ -50,7 +50,7 @@ internal class ValidateAccessTokenQueryHandler(IOptions<TokenConfiguration> toke
                 throw defaultException;
             }
 
-            if (!result.Claims.TryGetValue("machine-key", out var machineKey) || !Guid.TryParse(machineId?.ToString(), out var mKey))
+            if (!result.Claims.TryGetValue("row-key", out var machineKey) || !Guid.TryParse(machineId?.ToString(), out var mKey))
             {
                 throw defaultException;
             }
