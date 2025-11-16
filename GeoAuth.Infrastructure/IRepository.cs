@@ -12,3 +12,8 @@ public interface IRepository<T>
     Task<IEnumerable<T>> FindAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
         where TFilter : IFilter;
 }
+
+public interface ICreateableRepository
+{
+    Task<IResult<int>> CreateIfNotExistsAsync(CancellationToken cancellationToken);
+}

@@ -5,13 +5,13 @@ using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared;
 using GeoAuth.Shared.Requests.MachineToken;
 using Microsoft.Extensions.DependencyInjection;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Linq.Expressions;
 
 namespace GeoAuth.Infrastructure.Azure.Repositories;
 
-internal class MachineAccessTokenRepository([FromKeyedServices(KeyedServices.MachineAccessTokenTable)] TableClient machineAccessTokenTableClient) 
-    : AzureTableRepositoryBase<MachineAccessToken, DbMachineDataAccessToken, IMachineAccessToken>(machineAccessTokenTableClient), IMachineAccessTokenRepository
+internal class MachineAccessTokenRepository([FromKeyedServices(KeyedServices.MachineAccessTokenTable)] TableClient machineAccessTokenTableClient, 
+    TimeProvider timeProvider) 
+    : AzureTableRepositoryBase<MachineAccessToken, DbMachineDataAccessToken, IMachineAccessToken>(machineAccessTokenTableClient, timeProvider), IMachineAccessTokenRepository
 {
     public static MachineAccessTokenFilter? ToFilter(IFilter filter)
     {

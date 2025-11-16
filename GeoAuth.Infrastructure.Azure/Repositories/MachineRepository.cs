@@ -12,8 +12,8 @@ using System.Linq.Expressions;
 
 namespace GeoAuth.Infrastructure.Azure.Repositories;
 
-internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient) 
-    : AzureTableRepositoryBase<MachineData, DbMachineData, IMachineData>(machineTableClient), IMachineRepository
+internal class MachineRepository([FromKeyedServices(KeyedServices.MachineTable)] TableClient machineTableClient, TimeProvider timeProvider) 
+    : AzureTableRepositoryBase<MachineData, DbMachineData, IMachineData>(machineTableClient, timeProvider), IMachineRepository
 {
     private static MachineDataFilter? ToFilter(IFilter filter)
     {

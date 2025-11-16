@@ -1,4 +1,5 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
 using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared.Models;
@@ -6,11 +7,25 @@ using LinqKit;
 
 namespace GeoAuth.Infrastructure.Azure.Repositories
 {
-    internal abstract class AzureTableRepositoryBase<T,TDb, TContract>(TableClient tableClient) : RepositoryBase<T, TDb>
+    internal abstract class AzureTableRepositoryBase<T,TDb, TContract>(TableClient tableClient, TimeProvider timeProvider) 
+        : RepositoryBase<T, TDb>
+        , ICreateableRepository
         where T : IMappable<TContract>, TContract
         where TDb : class, IMappable<TContract>, ITableEntity, TContract
     {
         protected static ExpressionStarter<TDb> ExpressionBuilder => PredicateBuilder.New<TDb>();
+
+        public async Task<IResult<int>> CreateIfNotExistsAsync(CancellationToken cancellationToken)
+        {
+            var result = await tableClient.CreateIfNotExistsAsync(cancellationToken);
+            var rawResponse = result.GetRawResponse();
+            if (rawResponse.IsError)
+            {
+                return Result.Failed<int>(new Exception(rawResponse.ReasonPhrase));
+            }
+
+            return Result.Sucessful(rawResponse.Status);
+        }
 
         public override async Task<IEnumerable<T>> FindAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
         {
@@ -42,7 +57,14 @@ namespace GeoAuth.Infrastructure.Azure.Repositories
 
         public override async Task<IResult<int>> UpsertAsync(T entry, CancellationToken cancellationToken)
         {
-            using var result = await tableClient.UpsertEntityAsync(entry.Map<TDb>(), cancellationToken: cancellationToken);
+            var mappedEntry = entry.Map<TDb>();
+
+            mappedEntry.RowKey ??= Guid.NewGuid().ToString();
+
+            mappedEntry.Timestamp = timeProvider.GetUtcNow();
+            mappedEntry.ETag = ETag.All;
+
+            using var result = await tableClient.UpsertEntityAsync(mappedEntry, cancellationToken: cancellationToken);
 
             if (result.IsError)
             {

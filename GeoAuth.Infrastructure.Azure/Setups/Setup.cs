@@ -3,7 +3,9 @@ using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Infrastructure.Azure.Models;
+using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Models;
+using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Infrastructure.Setups;
 using GeoAuth.Shared;
 using GeoAuth.Shared.Extensions;
@@ -18,7 +20,7 @@ public record ColumnDefiniton(string Name, int Length);
 
 internal class Setup(ILogger<Setup> logger,
     IOptions<SetupConfiguration> setupOptions,
-    [FromKeyedServices(KeyedServices.SetupTable)] TableClient setupTableClient,
+    ISetupRepository setupRepository,
     TimeProvider timeProvider, IServiceProvider services) : IHealthCheckSetup
 {
     private bool hasRun = false;
@@ -78,9 +80,10 @@ internal class Setup(ILogger<Setup> logger,
         }
     }
 
-    private Task<DbSetup?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) => setupTableClient.QueryAsync<DbSetup>(
-            $"RowKey eq '{key}' and PartitionKey eq '{serviceConfiguration.GetServiceType().Name}'", 1)
-            .FirstOrDefaultAsync();
+    private Task<SetupEntity?> GetSetupTableEntity(string key, ServiceConfiguration serviceConfiguration) =>
+        setupRepository.GetAsync(new SetupFilter { 
+            Key = key, 
+            Type = serviceConfiguration.GetServiceType().Name }, CancellationToken.None);
 
     private async Task<bool> GetEntityStatusAsync(string key, 
         ServiceConfiguration serviceConfiguration)
@@ -94,17 +97,15 @@ internal class Setup(ILogger<Setup> logger,
 
         if (entity is null)
         {
-            var response = await setupTableClient.UpsertEntityAsync(new DbSetup
+            var response = await setupRepository.UpsertAsync(new SetupEntity
             {
-                RowKey = key,
-                PartitionKey = serviceConfiguration.GetServiceType().Name,
-                Timestamp = timeProvider.GetUtcNow(),
-                ETag = ETag.All
-            });
+                Key = key,
+                Type = serviceConfiguration.GetServiceType().Name
+            }, CancellationToken.None);
 
-            if (response.IsError)
+            if (!response.IsSuccess)
             {
-                logger.LogError("Upsert failed: {reasonPhrase}", response.ReasonPhrase);
+                logger.LogError(response.Exception, "Upsert failed");
             }
         }
     }
@@ -187,7 +188,10 @@ internal class Setup(ILogger<Setup> logger,
 
         var setupConfiguration = setupOptions.Value;
 
-        await setupTableClient.CreateIfNotExistsAsync();
+        if (setupRepository is ICreateableRepository createable)
+        {
+            await createable.CreateIfNotExistsAsync(CancellationToken.None);
+        }
 
         logger.LogTrace("Setup configuration: {configuration}", setupConfiguration);
         int configuredServicesCount = 0;
