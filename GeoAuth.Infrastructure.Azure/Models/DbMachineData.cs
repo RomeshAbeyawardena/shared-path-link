@@ -8,37 +8,19 @@ public class DbMachineData : MappableBase<IMachineData>, IMachineData, ITableEnt
 {
     protected override IMachineData Source => this;
     public string? Secret { get; set; }
-    public required Guid Id { get; set; }
-    public required Guid MachineId { get; set; }
+    
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
-    string ITableEntity.PartitionKey { 
-        get => MachineId.ToString(); 
-        set 
-        {
-            if (Guid.TryParse(value, out var id))
-            {
-                MachineId = id;
-            }
-        } 
-    }
-
-    string ITableEntity.RowKey { 
-        get => Id.ToString(); 
-        set
-        {
-            if (Guid.TryParse(value, out var id))
-            {
-                Id = id;
-            }
-        }
-    }
+    public string PartitionKey { get; set; } = default!;
+    public string RowKey { get; set; } = default!;
+    Guid IMachineData.MachineId { get => string.IsNullOrWhiteSpace(PartitionKey) || Guid.TryParse(PartitionKey, out var machineId) ? Guid.Empty : machineId; }
+    Guid IMachineData.Id { get => string.IsNullOrWhiteSpace(RowKey) || Guid.TryParse(RowKey, out var id) ? Guid.Empty : id; }
 
     public override void Map(IMachineData source)
     {
         Secret = source.Secret;
-        MachineId = source.MachineId;
-        Id = source.Id;
+        PartitionKey = source.MachineId.ToString();
+        RowKey = source.Id.ToString();
         Timestamp = source.Timestamp;
     }
 }
