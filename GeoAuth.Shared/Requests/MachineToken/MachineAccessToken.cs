@@ -8,8 +8,8 @@ namespace GeoAuth.Shared.Requests.MachineToken
         public string? Token { get; set; }
         public DateTimeOffset ValidFrom { get; set; }
         public DateTimeOffset Expires { get; set; }
-        public required string MachineId { get; set; }
-        public required string Id { get; set; }
+        public Guid MachineId { get; set; }
+        public Guid Id { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
 
         public override void Map(IMachineAccessToken source)

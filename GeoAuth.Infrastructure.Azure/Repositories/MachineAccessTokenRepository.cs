@@ -31,12 +31,12 @@ internal class MachineAccessTokenRepository([FromKeyedServices(KeyedServices.Mac
 
         if (request.RowKey.HasValue)
         {
-            expressionBuilder.And(x => x.Id == request.RowKey.ToString());
+            expressionBuilder.And(x => x.RowKey == request.RowKey.ToString());
         }
 
         if (request.PartitionKey.HasValue)
         {
-            expressionBuilder.And(x => x.MachineId == request.PartitionKey.ToString());
+            expressionBuilder.And(x => x.PartitionKey == request.PartitionKey.ToString());
         }
 
         bool useSeparateExpression = request.FromDate.HasValue && request.ToDate.HasValue;

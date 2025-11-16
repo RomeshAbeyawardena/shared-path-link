@@ -23,12 +23,12 @@ internal class SetupTableRepository([FromKeyedServices(KeyedServices.SetupTable)
 
         if (!string.IsNullOrWhiteSpace(setupFilter.Key))
         {
-            expressionBuilder.And(x => x.Id ==  setupFilter.Key);
+            expressionBuilder.And(x => x.RowKey ==  setupFilter.Key);
         }
 
         if (!string.IsNullOrWhiteSpace(setupFilter.Type))
         {
-            expressionBuilder.And(x => x.MachineId == setupFilter.Type);
+            expressionBuilder.And(x => x.PartitionKey == setupFilter.Type);
         }
 
         return expressionBuilder;
