@@ -13,8 +13,8 @@ public class DbMachineData : MappableBase<IMachineData>, IMachineData, ITableEnt
     public ETag ETag { get; set; }
     public string PartitionKey { get; set; } = default!;
     public string RowKey { get; set; } = default!;
-    Guid IMachineData.MachineId { get => string.IsNullOrWhiteSpace(PartitionKey) || Guid.TryParse(PartitionKey, out var machineId) ? Guid.Empty : machineId; }
-    Guid IMachineData.Id { get => string.IsNullOrWhiteSpace(RowKey) || Guid.TryParse(RowKey, out var id) ? Guid.Empty : id; }
+    Guid IMachineData.MachineId { get => string.IsNullOrWhiteSpace(PartitionKey) || !Guid.TryParse(PartitionKey, out var machineId) ? Guid.Empty : machineId; }
+    Guid IMachineData.Id { get => string.IsNullOrWhiteSpace(RowKey) || !Guid.TryParse(RowKey, out var id) ? Guid.Empty : id; }
 
     public override void Map(IMachineData source)
     {
