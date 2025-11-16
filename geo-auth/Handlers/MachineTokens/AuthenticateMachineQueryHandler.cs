@@ -1,4 +1,4 @@
-﻿using geo_auth.Handlers.Tokens;
+﻿using geo_auth.Configuration;
 using geo_auth.Models;
 using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Repositories;

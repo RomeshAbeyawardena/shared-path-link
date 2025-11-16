@@ -32,7 +32,7 @@ internal class DevelopmentSetup(IMachineRepository machineRepository,
 
         var result = await machineRepository.GetAsync(new MachineDataFilter
         {
-            RowKey = clonedMachineData.Id,
+            Id = clonedMachineData.Id,
             MachineId = clonedMachineData.MachineId
         }, CancellationToken.None);
 

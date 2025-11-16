@@ -1,4 +1,4 @@
-﻿namespace geo_auth.Handlers.Passwords;
+﻿namespace geo_auth.Configuration;
 
 internal record PasswordConfiguration
 {

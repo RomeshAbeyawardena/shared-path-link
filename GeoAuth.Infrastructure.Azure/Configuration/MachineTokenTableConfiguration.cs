@@ -1,6 +1,6 @@
-﻿namespace geo_auth.Handlers.MachineTokens;
+﻿namespace GeoAuth.Infrastructure.Azure.Configuration;
 
-internal record MachineTokenTableConfiguration
+public record MachineTokenTableConfiguration
 {
     public string? MachineTokenTableName { get; set; }
     public string? MachineAccessTokenTableName { get; set; }

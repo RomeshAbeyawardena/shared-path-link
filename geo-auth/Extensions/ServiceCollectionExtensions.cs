@@ -1,9 +1,6 @@
-﻿using Azure.Data.Tables;
-using Azure.Storage.Queues;
+﻿using Azure.Storage.Queues;
 using geo_auth.Configuration;
-using geo_auth.Handlers.MachineTokens;
-using geo_auth.Handlers.Passwords;
-using geo_auth.Handlers.Tokens;
+using GeoAuth.Infrastructure.Azure.Configuration;
 using GeoAuth.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +14,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
         return services
-            .AddKeyedSingleton<ISetup, Setup>(string.Empty)
-            .AddKeyedSingleton<ISetup, DevelopmentSetup>("development")
             .AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
-        {
-            PropertyNameCaseInsensitive = true
-        })
+            {
+                PropertyNameCaseInsensitive = true
+            })
         .AddSingleton(TimeProvider.System)
         .AddKeyedTransient(KeyedServices.MachineAccessTokenQueue, (s, key) =>
         {
@@ -36,42 +31,9 @@ public static class ServiceCollectionExtensions
             {
                 MessageEncoding = QueueMessageEncoding.Base64
             });
-            
+
             return queueClient;
-        })
-        .AddKeyedTransient(KeyedServices.MachineTable, (s, key) =>
-        {
-            var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
-                .Value;
-            
-            var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
-                .Value;
-
-            var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
-                machineTokenTableConfiguration.MachineTokenTableName);
-            return tableClient;
-        })
-        .AddKeyedTransient(KeyedServices.MachineAccessTokenTable, (s, key) => {
-            var machineTokenTableConfiguration = s.GetRequiredService<IOptions<MachineTokenTableConfiguration>>()
-                .Value;
-
-            var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
-                .Value;
-
-            var tableClient = new TableClient(valuesConfiguration.AzureWebJobsStorage,
-                machineTokenTableConfiguration.MachineAccessTokenTableName);
-            return tableClient;
-        })
-        .AddKeyedTransient(KeyedServices.SetupTable, (s, key) => {
-             var setupTableConfiguration = s.GetRequiredService<IOptions<SetupConfiguration>>()
-                 .Value;
-
-             var valuesConfiguration = s.GetRequiredService<IOptions<ValuesConfiguration>>()
-                 .Value;
-
-             return new TableClient(valuesConfiguration.AzureWebJobsStorage,
-                 setupTableConfiguration.SetupTableName);
-         });
+        });
     }
 
     public static IServiceCollection RegisterHandlers(this IServiceCollection services)
@@ -81,25 +43,14 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptions<MachineTokenTableConfiguration>()
-            .Bind(configuration.GetSection("machine"))
-            .ValidateOnStart();
-
-        services.AddOptions<ValuesConfiguration>()
-            .Bind(configuration.GetSection("values"))
-            .ValidateOnStart();
-
         services.AddOptions<PasswordConfiguration>()
             .Bind(configuration.GetSection("password"))
-            .ValidateOnStart();
-
-        services.AddOptions<SetupConfiguration>()
-            .Bind(configuration.GetSection("Setup"))
             .ValidateOnStart();
 
         services.AddOptions<TokenConfiguration>()
             .Bind(configuration.GetSection("token"))
             .ValidateOnStart();
+
         return services;
     }
 }

@@ -30,12 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GeoAuth.Infrastructure\GeoAuth.Infrastructure.csproj" />
+        <ProjectReference Include="..\GeoAuth.Infrastructure.Azure\GeoAuth.Infrastructure.Azure.csproj" />
         <ProjectReference Include="..\GeoAuth.Shared\GeoAuth.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Configuration\" />
     </ItemGroup>
 
 </Project>

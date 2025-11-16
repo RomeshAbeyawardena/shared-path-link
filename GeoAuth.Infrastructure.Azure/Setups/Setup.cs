@@ -14,7 +14,7 @@ namespace GeoAuth.Infrastructure.Azure.Setups;
 
 public record ColumnDefiniton(string Name, int Length);
 
-internal interface ISetup
+public interface ISetup
 {
     Task RunOnceAsync();
 }

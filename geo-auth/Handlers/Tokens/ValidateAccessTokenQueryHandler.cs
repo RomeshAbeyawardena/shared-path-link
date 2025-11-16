@@ -1,4 +1,5 @@
-﻿using GeoAuth.Shared.Exceptions;
+﻿using geo_auth.Configuration;
+using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Http;

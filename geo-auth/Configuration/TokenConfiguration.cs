@@ -1,4 +1,4 @@
-﻿namespace geo_auth.Handlers.Tokens;
+﻿namespace geo_auth.Configuration;
 
 public record TokenConfiguration
 {
