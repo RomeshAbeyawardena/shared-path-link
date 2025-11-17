@@ -5,7 +5,7 @@ namespace GeoAuth.Shared.Projectors;
 
 public static class DictionaryProjector<T>
 {
-    public static Func<T, Dictionary<string, object>> Create()
+    public static Func<T, Dictionary<string, object>> Serialise()
     {
         var type = typeof(T);
         var param = Expression.Parameter(type, "obj");
@@ -34,4 +34,44 @@ public static class DictionaryProjector<T>
         // Lambda: obj => new Dictionary<string, object> { ... }
         return Expression.Lambda<Func<T, Dictionary<string, object>>>(body, param).Compile();
     }
+
+    public static Func<Dictionary<string, object>, T> Hydrator()
+    {
+        var dictParam = Expression.Parameter(typeof(Dictionary<string, object>), "dict");
+        var resultVar = Expression.Variable(typeof(T), "result");
+
+        var newResult = Expression.New(typeof(T));
+        var assignResult = Expression.Assign(resultVar, newResult);
+
+        var tryGetValue = typeof(Dictionary<string, object>)
+            .GetMethod("TryGetValue", new[] { typeof(string), typeof(object).MakeByRefType() });
+
+        var variables = new List<ParameterExpression> { resultVar };
+        var expressions = new List<Expression> { assignResult };
+
+        foreach (var prop in typeof(T).GetProperties().Where(p => p.CanWrite))
+        {
+            var outVar = Expression.Variable(typeof(object), "out_" + prop.Name);
+            variables.Add(outVar); // declare it in the block scope
+
+            var tryCall = Expression.Call(dictParam, tryGetValue,
+                Expression.Constant(prop.Name),
+                outVar);
+
+            var assignProp = Expression.Assign(
+                Expression.Property(resultVar, prop),
+                Expression.Convert(outVar, prop.PropertyType));
+
+            var ifTrue = Expression.IfThen(tryCall, assignProp);
+
+            expressions.Add(ifTrue);
+        }
+
+        expressions.Add(resultVar); // return result
+
+        var body = Expression.Block(variables, expressions);
+
+        return Expression.Lambda<Func<Dictionary<string, object>, T>>(body, dictParam).Compile();
+    }
+
 }

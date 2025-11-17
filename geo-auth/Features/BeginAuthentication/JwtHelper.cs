@@ -14,8 +14,14 @@ namespace geo_auth.Features.BeginAuthentication;
 public interface IJwtHelper
 {
     IResult<TToken> ReadToken<TToken>(string token, TokenValidationParameters tokenValidationParameters);
-    IResult<string> WriteToken<TToken>(TToken model, bool encryptToken = false);
+    IResult<string> WriteToken<TToken>(TToken model, JwtHelperWriterOptions options);
 }
+
+public record IssuerAudienceOptions(string? AudienceOverride = null, string? IssuerOverride = null);
+
+public record JwtHelperWriterOptions(bool EncryptToken = false, 
+    IssuerAudienceOptions? IssuerAudienceOptions = null, 
+    int? DefaultMaximumTokenLifetime = null);
 
 public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
 {
@@ -24,7 +30,7 @@ public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, T
         throw new NotImplementedException();
     }
 
-    public IResult<string> WriteToken<TToken>(TToken model, bool encryptToken = false)
+    public IResult<string> WriteToken<TToken>(TToken model, JwtHelperWriterOptions options)
     {
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
@@ -37,25 +43,27 @@ public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, T
         };
         var utcNow = timeProvider.GetUtcNow();
 
-        var dictionaryProjector = DictionaryProjector<TToken>.Create();
+        var dictionaryProjector = DictionaryProjector<TToken>.Serialise();
         var descriptor = new SecurityTokenDescriptor
         {
-            Issuer = tokenConfiguration.ValidIssuer,
-            Audience = tokenConfiguration.ValidAudience,
+            Audience = options.IssuerAudienceOptions?.AudienceOverride ?? tokenConfiguration.ValidAudience,
+            Issuer = options.IssuerAudienceOptions?.IssuerOverride ?? tokenConfiguration.ValidIssuer,
             Claims = dictionaryProjector.Invoke(model),
             NotBefore = utcNow.UtcDateTime,
-            Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2)),
+            Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime
+                .GetValueOrDefault(options.DefaultMaximumTokenLifetime.GetValueOrDefault(2))),
             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
         };
 
-        if (!string.IsNullOrWhiteSpace(tokenConfiguration.EncryptionKey) && encryptToken)
+        if (!string.IsNullOrWhiteSpace(tokenConfiguration.EncryptionKey) && options.EncryptToken)
         {
             Span<byte> bytes = new(Convert.FromBase64String(tokenConfiguration.EncryptionKey));
             var keyBytes = bytes.Slice(0, 32);
 
             key = new SymmetricSecurityKey(keyBytes.ToArray())
             {
-                KeyId = tokenConfiguration.SigningKeyId ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
+                KeyId = tokenConfiguration.EncryptionKeyId 
+                ?? throw new ResponseException("Encrypting key ID missing", StatusCodes.Status500InternalServerError)
             };
 
             descriptor.EncryptingCredentials = new EncryptingCredentials(key, SecurityAlgorithms.Aes256KW,

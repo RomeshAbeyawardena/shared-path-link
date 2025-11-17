@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoAuth.Infrastructure.Azur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoAuth.Infrastructure", "GeoAuth.Infrastructure\GeoAuth.Infrastructure.csproj", "{FDCF6229-815E-4F2F-86B9-4E7D2A0A5B4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoAuth.Tests", "GeoAuth.Tests\GeoAuth.Tests.csproj", "{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{FDCF6229-815E-4F2F-86B9-4E7D2A0A5B4A}.Release|x64.Build.0 = Release|Any CPU
 		{FDCF6229-815E-4F2F-86B9-4E7D2A0A5B4A}.Release|x86.ActiveCfg = Release|Any CPU
 		{FDCF6229-815E-4F2F-86B9-4E7D2A0A5B4A}.Release|x86.Build.0 = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|x64.Build.0 = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Debug|x86.Build.0 = Debug|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|Any CPU.Build.0 = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|x64.ActiveCfg = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|x64.Build.0 = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|x86.ActiveCfg = Release|Any CPU
+		{063673AF-D5FF-4AA2-93B6-CA46AB7CA677}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
