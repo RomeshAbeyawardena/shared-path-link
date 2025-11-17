@@ -21,7 +21,7 @@ public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, T
 {
     private readonly JwtSecurityTokenHandler handler = new();
 
-    public async ValueTask<IResult<TToken>> ReadToken<TToken>(string token, TokenValidationParameters tokenValidationParameters)
+    public async ValueTask<IResult<TToken>> ReadTokenAsync<TToken>(string token, TokenValidationParameters tokenValidationParameters)
     {
         var result = await handler.ValidateTokenAsync(token, tokenValidationParameters);
 
