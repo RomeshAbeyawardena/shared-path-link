@@ -6,10 +6,10 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace GeoAuth.Shared.Features.Jwt;
 
-public class JwtHelper(ITokenConfiguration tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
+public class JwtHelper(ITokenConfiguration tokenConfiguration, TimeProvider timeProvider) : IJwtHelper
 {
     private readonly JwtSecurityTokenHandler handler = new();
-
+    
     public async ValueTask<IResult<TToken>> ReadTokenAsync<TToken>(string token, TokenValidationParameters tokenValidationParameters)
     {
         var result = await handler.ValidateTokenAsync(token, tokenValidationParameters);
@@ -53,8 +53,6 @@ public class JwtHelper(ITokenConfiguration tokenConfigurationOptions, TimeProvid
 
     public IResult<string> WriteToken<TToken>(TToken model, JwtHelperWriterOptions options)
     {
-        var tokenConfiguration = tokenConfigurationOptions.Value;
-
         var utcNow = timeProvider.GetUtcNow();
 
         var serialiser = DictionaryProjector<TToken>.Serialise();
