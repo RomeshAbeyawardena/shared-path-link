@@ -1,13 +1,12 @@
 ﻿using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Projectors;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace GeoAuth.Shared.Features.Jwt;
 
-public class JwtHelper(IOptions<ITokenConfiguration> tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
+public class JwtHelper(ITokenConfiguration tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
 {
     private readonly JwtSecurityTokenHandler handler = new();
 

@@ -3,6 +3,7 @@ using geo_auth.Configuration;
 using GeoAuth.Infrastructure.Azure.Configuration;
 using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Shared;
+using GeoAuth.Shared.Features.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
         return services
+            .AddSingleton<IJwtHelper, JwtHelper>()
             .AddDataServices()
             .AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
             {
@@ -54,6 +56,8 @@ public static class ServiceCollectionExtensions
         services.AddOptions<TokenConfiguration>()
             .Bind(configuration.GetSection("token"))
             .ValidateOnStart();
+
+        services.AddSingleton<ITokenConfiguration>(s => s.GetRequiredService<IOptions<TokenConfiguration>>().Value);
 
         return services;
     }
