@@ -43,7 +43,8 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         descriptor.NotBefore = utcNow.UtcDateTime;
         descriptor.Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2));
         descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
+        descriptor.EncryptingCredentials = new EncryptingCredentials(key, SecurityAlgorithms.Aes256Encryption);
+
         var handler = new JwtSecurityTokenHandler();
         var token = handler.CreateJwtSecurityToken(descriptor);
         return token.ToString();
