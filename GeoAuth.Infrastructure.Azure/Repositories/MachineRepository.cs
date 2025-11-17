@@ -1,11 +1,9 @@
 ﻿using Azure.Data.Tables;
-using GeoAuth.Infrastructure.Azure.Extensions;
 using GeoAuth.Infrastructure.Azure.Models;
 using GeoAuth.Infrastructure.Filters;
 using GeoAuth.Infrastructure.Models;
 using GeoAuth.Infrastructure.Repositories;
 using GeoAuth.Shared;
-using GeoAuth.Shared.Extensions;
 using GeoAuth.Shared.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
