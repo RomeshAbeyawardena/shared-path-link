@@ -1,23 +1,13 @@
-﻿using Azure.Core;
-using geo_auth.Configuration;
-using GeoAuth.Shared.Exceptions;
+﻿using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Projectors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace geo_auth.Features.BeginAuthentication;
+namespace GeoAuth.Shared.Features.Jwt;
 
-public enum SymmetricSecurityKeyKind
-{
-    Encryption,
-    Signing
-}
-
-public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
+public class JwtHelper(IOptions<ITokenConfiguration> tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
 {
     private readonly JwtSecurityTokenHandler handler = new();
 
@@ -34,7 +24,7 @@ public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, T
         return Result.Sucessful(deserialiser(result.Claims.ToDictionary()));
     }
 
-    private static SymmetricSecurityKey GetSymmetricSecurityKey(SymmetricSecurityKeyKind kind, TokenConfiguration tokenConfiguration)
+    private static SymmetricSecurityKey GetSymmetricSecurityKey(SymmetricSecurityKeyKind kind, ITokenConfiguration tokenConfiguration)
     {
         switch (kind)
         {

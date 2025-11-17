@@ -1,6 +1,8 @@
-﻿namespace geo_auth.Configuration;
+﻿using GeoAuth.Shared.Features.Jwt;
 
-public record TokenConfiguration
+namespace geo_auth.Configuration;
+
+public record TokenConfiguration : ITokenConfiguration
 {
     public string? ValidAudience { get; init; }
     public string? ValidIssuer { get; init; }

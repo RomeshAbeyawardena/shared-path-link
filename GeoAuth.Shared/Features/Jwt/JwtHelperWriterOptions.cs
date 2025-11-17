@@ -1,4 +1,4 @@
-﻿namespace geo_auth.Features.BeginAuthentication;
+﻿namespace GeoAuth.Shared.Features.Jwt;
 
 public record JwtHelperWriterOptions(bool EncryptToken = false, 
     IssuerAudienceOptions? IssuerAudienceOptions = null, 

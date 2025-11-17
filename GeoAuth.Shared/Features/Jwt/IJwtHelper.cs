@@ -1,7 +1,7 @@
 ﻿using GeoAuth.Shared.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace geo_auth.Features.BeginAuthentication;
+namespace GeoAuth.Shared.Features.Jwt;
 
 public interface IJwtHelper
 {

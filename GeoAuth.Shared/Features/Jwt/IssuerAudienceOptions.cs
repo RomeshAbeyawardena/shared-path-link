@@ -1,3 +1,3 @@
-﻿namespace geo_auth.Features.BeginAuthentication;
+﻿namespace GeoAuth.Shared.Features.Jwt;
 
 public record IssuerAudienceOptions(string? AudienceOverride = null, string? IssuerOverride = null);
