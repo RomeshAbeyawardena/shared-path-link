@@ -11,66 +11,84 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth.Features.BeginAuthentication;
 
-public interface IJwtHelper
+public enum SymmetricSecurityKeyKind
 {
-    IResult<TToken> ReadToken<TToken>(string token, TokenValidationParameters tokenValidationParameters);
-    IResult<string> WriteToken<TToken>(TToken model, JwtHelperWriterOptions options);
+    Encryption,
+    Signing
 }
-
-public record IssuerAudienceOptions(string? AudienceOverride = null, string? IssuerOverride = null);
-
-public record JwtHelperWriterOptions(bool EncryptToken = false, 
-    IssuerAudienceOptions? IssuerAudienceOptions = null, 
-    int? DefaultMaximumTokenLifetime = null);
 
 public class JwtHelper(IOptions<TokenConfiguration> tokenConfigurationOptions, TimeProvider timeProvider) : IJwtHelper
 {
-    public IResult<TToken> ReadToken<TToken>(string token, TokenValidationParameters tokenValidationParameters)
+    private readonly JwtSecurityTokenHandler handler = new();
+
+    public async ValueTask<IResult<TToken>> ReadToken<TToken>(string token, TokenValidationParameters tokenValidationParameters)
     {
-        throw new NotImplementedException();
+        var result = await handler.ValidateTokenAsync(token, tokenValidationParameters);
+
+        if(!result.IsValid)
+        {
+            return Result.Failed<TToken>(result.Exception);
+        }
+
+        var deserialiser = DictionaryProjector<TToken>.Hydrator();
+        return Result.Sucessful(deserialiser(result.Claims.ToDictionary()));
+    }
+
+    private static SymmetricSecurityKey GetSymmetricSecurityKey(SymmetricSecurityKeyKind kind, TokenConfiguration tokenConfiguration)
+    {
+        switch (kind)
+        {
+            case SymmetricSecurityKeyKind.Encryption:
+                var key = Convert.FromBase64String(tokenConfiguration.SigningKey
+                   ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError));
+
+                return new SymmetricSecurityKey(key)
+                {
+                    KeyId = tokenConfiguration.SigningKeyId 
+                        ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
+                };
+
+                case SymmetricSecurityKeyKind.Signing:
+                var enc_key = new Span<byte>(Convert.FromBase64String(tokenConfiguration.EncryptionKey
+                    ?? throw new ResponseException("Encryption key is missing", StatusCodes.Status500InternalServerError)))[..32];
+
+                return new SymmetricSecurityKey(enc_key.ToArray())
+                {
+                    KeyId = tokenConfiguration.EncryptionKeyId
+                };
+
+            default:
+                throw new IndexOutOfRangeException();
+        }
     }
 
     public IResult<string> WriteToken<TToken>(TToken model, JwtHelperWriterOptions options)
     {
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
-        var signingKey = tokenConfiguration.SigningKey ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
-        var signingKeyBytes = Convert.FromBase64String(signingKey);
-
-        var key = new SymmetricSecurityKey(signingKeyBytes)
-        {
-            KeyId = tokenConfiguration.SigningKeyId ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
-        };
         var utcNow = timeProvider.GetUtcNow();
 
-        var dictionaryProjector = DictionaryProjector<TToken>.Serialise();
+        var serialiser = DictionaryProjector<TToken>.Serialise();
         var descriptor = new SecurityTokenDescriptor
         {
             Audience = options.IssuerAudienceOptions?.AudienceOverride ?? tokenConfiguration.ValidAudience,
             Issuer = options.IssuerAudienceOptions?.IssuerOverride ?? tokenConfiguration.ValidIssuer,
-            Claims = dictionaryProjector.Invoke(model),
+            Claims = serialiser.Invoke(model),
             NotBefore = utcNow.UtcDateTime,
             Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime
                 .GetValueOrDefault(options.DefaultMaximumTokenLifetime.GetValueOrDefault(2))),
-            SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            SigningCredentials = new SigningCredentials(GetSymmetricSecurityKey(SymmetricSecurityKeyKind.Signing, tokenConfiguration), 
+                SecurityAlgorithms.HmacSha256,
+                SecurityAlgorithms.Sha256Digest)
         };
 
         if (!string.IsNullOrWhiteSpace(tokenConfiguration.EncryptionKey) && options.EncryptToken)
         {
-            Span<byte> bytes = new(Convert.FromBase64String(tokenConfiguration.EncryptionKey));
-            var keyBytes = bytes.Slice(0, 32);
-
-            key = new SymmetricSecurityKey(keyBytes.ToArray())
-            {
-                KeyId = tokenConfiguration.EncryptionKeyId 
-                ?? throw new ResponseException("Encrypting key ID missing", StatusCodes.Status500InternalServerError)
-            };
-
-            descriptor.EncryptingCredentials = new EncryptingCredentials(key, SecurityAlgorithms.Aes256KW,
+            descriptor.EncryptingCredentials = new EncryptingCredentials(GetSymmetricSecurityKey(SymmetricSecurityKeyKind.Encryption, tokenConfiguration), 
+                SecurityAlgorithms.Aes256KW,
                 SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
-        var handler = new JwtSecurityTokenHandler();
         var token = handler.CreateEncodedJwt(descriptor);
         return Result.Sucessful(token);
 
