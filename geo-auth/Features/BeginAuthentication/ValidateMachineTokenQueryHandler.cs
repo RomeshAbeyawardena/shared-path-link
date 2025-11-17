@@ -33,6 +33,7 @@ internal class ValidateMachineTokenQueryHandler(IOptions<TokenConfiguration> tok
                 ValidIssuer = tokenConfiguration.ValidIssuer,
                 ValidateIssuerSigningKey = true,
                 ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+                TokenDecryptionKey = key,
                 IssuerSigningKey = key,
                 //ValidateTokenReplay = true
             });

@@ -25,7 +25,12 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         var tokenConfiguration = tokenConfigurationOptions.Value;
 
         var signingKey = tokenConfiguration.SigningKey ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
-        var key = new SymmetricSecurityKey(Convert.FromBase64String(signingKey))
+        var signingKeyBytes = Convert.FromBase64String(signingKey);
+
+        Span<byte> bytes = new(signingKeyBytes);
+        var keyBytes = bytes.Slice(0, 32);
+
+        var key = new SymmetricSecurityKey(keyBytes.ToArray())
         {
             KeyId = tokenConfiguration.SigningKeyId ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
         };
@@ -43,11 +48,12 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         descriptor.NotBefore = utcNow.UtcDateTime;
         descriptor.Expires = utcNow.UtcDateTime.AddHours(tokenConfiguration.MaximumTokenLifetime.GetValueOrDefault(2));
         descriptor.SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        descriptor.EncryptingCredentials = new EncryptingCredentials(key, SecurityAlgorithms.Aes256Encryption);
-
+        descriptor.EncryptingCredentials = new EncryptingCredentials(key, SecurityAlgorithms.Aes256KW, 
+            SecurityAlgorithms.Aes256CbcHmacSha512);
+        
         var handler = new JwtSecurityTokenHandler();
-        var token = handler.CreateJwtSecurityToken(descriptor);
-        return token.ToString();
+        var token = handler.CreateEncodedJwt(descriptor);
+        return token;
     }
 
     public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)
