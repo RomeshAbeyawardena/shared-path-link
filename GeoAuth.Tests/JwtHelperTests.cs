@@ -53,7 +53,7 @@ internal class JwtHelperTests
         IdentityModelEventSource.ShowPII = true;
         IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 
-        var token = _jwtHelper.WriteToken(new Customer
+        var customer = new Customer
         {
             Id = Guid.NewGuid(),
             Name = "Susan Hall",
@@ -61,11 +61,15 @@ internal class JwtHelperTests
             City = "Edinburgh",
             Region = "Scotland",
             PostalCode = "ES1 NHX"
-        }, new JwtHelperWriterOptions(true));
+        };
+
+        var token = _jwtHelper.WriteToken(customer, new JwtHelperWriterOptions(true));
 
         Assert.That(token.IsSuccess, Is.True);
 
         var result = await _jwtHelper.ReadTokenAsync<CustomerDto>(token.Result!, _jwtHelper.DefaultParameters(true, true));
         Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
+
+        Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
     }
 }
