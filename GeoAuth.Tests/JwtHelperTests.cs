@@ -32,7 +32,7 @@ internal class JwtHelperTests
             .Returns(2);
 
         config.SetupGet(x => x.SigningKey)
-            .Returns("ODM5ZWExMjgtMWYxZS00Y2M4LTlkMzMtMjZiZTc2NzIyM2M4");
+            .Returns("ZDhhOGNiZjQtMDMzMy00OWM0LTgwZmYtNDI3ZDkwZDRjNzNj");
 
         config.SetupGet(x => x.SigningKeyId)
             .Returns("N2EzZDJlOTctN2NlMS00NmJlLWIwNWYtODFkY2MxZGFhOTlh");
@@ -64,17 +64,20 @@ internal class JwtHelperTests
         Assert.That(token.IsSuccess, Is.True);
 
         var result = await _jwtHelper.ReadTokenAsync<CustomerDto>(token.Result!, _jwtHelper.DefaultParameters(true, true));
-        Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
-
-        Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
+            Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
+        });
 
         token = _jwtHelper.WriteToken(customer, new JwtHelperWriterOptions());
 
         Assert.That(token.IsSuccess, Is.True);
-
         result = await _jwtHelper.ReadTokenAsync<CustomerDto>(token.Result!, _jwtHelper.DefaultParameters(true, false));
-        Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
-
-        Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
+            Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
+        });
     }
 }
