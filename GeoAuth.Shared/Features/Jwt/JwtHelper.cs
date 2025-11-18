@@ -15,8 +15,16 @@ public class JwtHelper(ITokenConfiguration tokenConfiguration, TimeProvider time
         switch (kind)
         {
             case SymmetricSecurityKeyKind.Encryption:
-                var enc_key = new Span<byte>(Convert.FromBase64String(tokenConfiguration.EncryptionKey
-                    ?? throw new ResponseException("Encryption key is missing", StatusCodes.Status500InternalServerError)))[..32];
+
+                var rawKey = Convert.FromBase64String(tokenConfiguration.EncryptionKey
+                    ?? throw new ResponseException("Encryption key is missing", StatusCodes.Status500InternalServerError));
+
+                if (rawKey.Length < 32)
+                {
+                    throw new IndexOutOfRangeException("Encryption key must have a minimum length of 32 bytes");
+                }
+
+                var enc_key = new Span<byte>(rawKey)[..32];
 
                 return new SymmetricSecurityKey(enc_key.ToArray())
                 {
@@ -26,7 +34,7 @@ public class JwtHelper(ITokenConfiguration tokenConfiguration, TimeProvider time
             case SymmetricSecurityKeyKind.Signing:
                 var key = Convert.FromBase64String(tokenConfiguration.SigningKey
                    ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError));
-                IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+                
                 return new SymmetricSecurityKey(key)
                 {
                     KeyId = tokenConfiguration.SigningKeyId

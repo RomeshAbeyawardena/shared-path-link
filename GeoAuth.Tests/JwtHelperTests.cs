@@ -15,6 +15,9 @@ internal class JwtHelperTests
 
     public void SetUp()
     {
+        IdentityModelEventSource.ShowPII = true;
+        IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+
         _timeProvider = new FakeTimeProvider(DateTimeOffset.UtcNow);
 
         var config = new Mock<ITokenConfiguration>();
@@ -46,9 +49,6 @@ internal class JwtHelperTests
     [Test]
     public async Task WriteToken()
     {
-        IdentityModelEventSource.ShowPII = true;
-        IdentityModelEventSource.LogCompleteSecurityArtifact = true;
-
         var customer = new Customer
         {
             Id = Guid.NewGuid(),
@@ -64,6 +64,15 @@ internal class JwtHelperTests
         Assert.That(token.IsSuccess, Is.True);
 
         var result = await _jwtHelper.ReadTokenAsync<CustomerDto>(token.Result!, _jwtHelper.DefaultParameters(true, true));
+        Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
+
+        Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
+
+        token = _jwtHelper.WriteToken(customer, new JwtHelperWriterOptions());
+
+        Assert.That(token.IsSuccess, Is.True);
+
+        result = await _jwtHelper.ReadTokenAsync<CustomerDto>(token.Result!, _jwtHelper.DefaultParameters(true, false));
         Assert.That(result.IsSuccess, Is.True, () => result.Exception?.Message ?? string.Empty);
 
         Assert.That(result.Result?.Map<Customer>(), Is.EqualTo(customer));
