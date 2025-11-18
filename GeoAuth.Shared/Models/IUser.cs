@@ -2,10 +2,10 @@
 
 public interface IUser : IMappable<IUser>
 {
-    Guid? Id { get; set; }
-    Guid? ClientId { get; set; }
-    string? Email { get; set; }
-    string? Name { get; set; }
-    string? Secret { get; set; }
-    string? Salt { get; set; }
+    Guid? Id { get; }
+    Guid? ClientId { get; }
+    string? Email { get; }
+    string? Name { get; }
+    string? Secret { get; }
+    string? Salt { get; }
 }

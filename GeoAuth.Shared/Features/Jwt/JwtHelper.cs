@@ -1,7 +1,6 @@
 ﻿using GeoAuth.Shared.Exceptions;
 using GeoAuth.Shared.Models;
 using GeoAuth.Shared.Projectors;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
