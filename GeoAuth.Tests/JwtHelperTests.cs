@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.IdentityModel.Logging;
 using Moq;
-using System.Globalization;
 
 
 namespace GeoAuth.Tests;
@@ -16,10 +15,7 @@ internal class JwtHelperTests
 
     public void SetUp()
     {
-        _timeProvider = new FakeTimeProvider(DateTimeOffset
-            .ParseExact("18/11/2025 13:40:08", 
-            "dd/MM/yyyy HH:mm:ss",
-            CultureInfo.GetCultureInfo("en-gb")));
+        _timeProvider = new FakeTimeProvider(DateTimeOffset.UtcNow);
 
         var config = new Mock<ITokenConfiguration>();
 
