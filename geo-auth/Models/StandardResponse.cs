@@ -15,13 +15,16 @@ internal abstract record MappableStandardResponse<TContract, T> : StandardRespon
         Map(contract);
     }
 
-    public TResult Map<TResult>(Func<TResult>? instanceFactory = null) where TResult : IMappable<TContract>
+    public TResult Map<TResult>(Func<TResult> instanceFactory) where TResult : IMappable<TContract>
     {
-        var result = instanceFactory is null
-            ? Activator.CreateInstance<TResult>()
-            : instanceFactory();
+        var result = instanceFactory();
         result.Map(Source);
         return result;
+    }
+
+    public TResult Map<TResult>() where TResult : IMappable<TContract>, new()
+    {
+        return Map(() => new TResult());
     }
 
     public abstract void Map(TContract source);

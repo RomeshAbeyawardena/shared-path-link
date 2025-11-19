@@ -10,8 +10,8 @@ namespace GeoAuth.Infrastructure.Azure.Repositories
     internal abstract class AzureTableRepositoryBase<T,TDb, TContract>(TableClient tableClient, TimeProvider timeProvider) 
         : RepositoryBase<T, TDb>
         , ICreateableRepository
-        where T : IMappable<TContract>, TContract
-        where TDb : class, IMappable<TContract>, ITableEntity, TContract
+        where T : IMappable<TContract>, TContract, new()
+        where TDb : class, IMappable<TContract>, ITableEntity, TContract, new()
     {
         protected static ExpressionStarter<TDb> ExpressionBuilder => PredicateBuilder.New<TDb>();
 
