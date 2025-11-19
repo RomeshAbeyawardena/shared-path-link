@@ -47,7 +47,7 @@ public static partial class Endpoints
             var machineToken = machineTokenQueryResult.Result ??
               throw new ResponseException("Unexpected null object", StatusCodes.Status500InternalServerError);
 
-            var machineTokenAuthenticationResult = await mediator.Send(new AuthenticateMachineQuery(machineToken.MachineId, machineToken.Secret));
+            var machineTokenAuthenticationResult = await mediator.Send(new IssueMachineAuthTokenCommand(machineToken.MachineId, machineToken.Secret));
             machineTokenAuthenticationResult.EnsureSuccessOrThrow();
             
             return new AuthTokenResponse(new AuthTokenResult(machineTokenAuthenticationResult.Result?.Token), automationId);

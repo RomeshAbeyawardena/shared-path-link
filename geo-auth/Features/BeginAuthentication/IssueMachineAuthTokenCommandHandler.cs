@@ -13,18 +13,19 @@ using Microsoft.Extensions.Options;
 
 namespace geo_auth.Features.BeginAuthentication;
 
-internal class AuthenticateMachineQueryHandler(IMachineRepository machineRepository,
+internal class IssueMachineAuthTokenCommandHandler(IMachineRepository machineRepository,
     TimeProvider timeProvider, IOptions<TokenConfiguration> tokenConfigurationOptions, 
     IJwtHelper jwtHelper, IMediator mediator)
-    : IRequestHandler<AuthenticateMachineQuery, AuthenticateMachineResult>
+    : IRequestHandler<IssueMachineAuthTokenCommand, AuthenticateMachineResult>
 {
-    private string GenerateToken(AuthenticateMachineQuery query, MachineData request)
+    private string GenerateToken(IssueMachineAuthTokenCommand query, MachineData request)
     {
-        var tokenResult = jwtHelper.WriteToken(new MachineToken
+        var tokenResult = jwtHelper.WriteToken(new MachineTokenDto
         {
-            MachineId = request.MachineId,
+            MachineId = request.MachineId.ToString(),
+            Scopes = query.Scopes,
             Secret = request.Secret
-        }.Map<MachineTokenDto>(), new JwtHelperWriterOptions(true));
+        }, new JwtHelperWriterOptions(true));
 
         if (!tokenResult.IsSuccess)
         {
@@ -34,7 +35,7 @@ internal class AuthenticateMachineQueryHandler(IMachineRepository machineReposit
         return tokenResult.Result;
     }
 
-    public async Task<AuthenticateMachineResult> Handle(AuthenticateMachineQuery request, CancellationToken cancellationToken)
+    public async Task<AuthenticateMachineResult> Handle(IssueMachineAuthTokenCommand request, CancellationToken cancellationToken)
     {
         try
         {

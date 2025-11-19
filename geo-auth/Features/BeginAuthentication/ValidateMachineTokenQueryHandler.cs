@@ -1,65 +1,26 @@
-﻿using geo_auth.Configuration;
-using GeoAuth.Shared.Exceptions;
+﻿using GeoAuth.Shared.Extensions;
+using GeoAuth.Shared.Features.Jwt;
 using GeoAuth.Shared.Requests.Tokens;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace geo_auth.Features.BeginAuthentication;
 
-internal class ValidateMachineTokenQueryHandler(IOptions<TokenConfiguration> tokenConfigurationOptions, 
+internal class ValidateMachineTokenQueryHandler(IJwtHelper jwtHelper, 
     ILogger<ValidateMachineTokenQueryHandler> logger) : IRequestHandler<ValidateMachineTokenQuery, MachineTokenQueryResult>
 {
     public async Task<MachineTokenQueryResult> Handle(ValidateMachineTokenQuery request, CancellationToken cancellationToken)
     {
-        var tokenConfiguration = tokenConfigurationOptions.Value;
         try
         {
-            var signingKey = tokenConfiguration.SigningKey ?? throw new ResponseException("Signing key missing", StatusCodes.Status500InternalServerError);
-            var key = new SymmetricSecurityKey(Convert.FromBase64String(signingKey))
-            {
-                KeyId = tokenConfiguration.SigningKeyId ?? throw new ResponseException("Signing key ID missing", StatusCodes.Status500InternalServerError)
-            };
+            var tokenResult = await jwtHelper.ReadTokenAsync<MachineTokenDto>(request.Token, jwtHelper.DefaultParameters(true, true));
 
-            var token = await new JwtSecurityTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
-            {
-                ValidateAudience = true,
-                ValidAudience = tokenConfiguration.ValidAudience,
-                ValidateIssuer = true,
-                ValidIssuer = tokenConfiguration.ValidIssuer,
-                ValidateIssuerSigningKey = true,
-                ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
-                TokenDecryptionKey = key,
-                IssuerSigningKey = key,
-                //ValidateTokenReplay = true
-            });
+            tokenResult.EnsureSuccessOrThrow();
 
-            var failureException = new ResponseException("Token is invalid!", StatusCodes.Status406NotAcceptable, token.Exception); ;
-
-            if (!token.IsValid)
-            {
-            #if DEBUG
-                IdentityModelEventSource.ShowPII = true;
-#endif
-                throw failureException;
-            }
-
-            if (!token.Claims.TryGetValue("machineId", out var machineId) || !Guid.TryParse(machineId?.ToString(), out var machId))
-            {
-                throw failureException;
-            }
-
-            if (!token.Claims.TryGetValue("secret", out var secret))
-            {
-                throw failureException;
-            }
+            var tokenClaims = tokenResult.Result!.Map<MachineToken>();
 
             return new MachineTokenQueryResult(
-                new MachineTokenQueryResponse(machId, secret?.ToString()));
+                new MachineTokenQueryResponse(tokenClaims.MachineId, tokenClaims.Secret));
         }
         catch (Exception ex)
         {
