@@ -2,5 +2,6 @@
 
 public interface IMappable<T> : ISingularMappable<T>
 {
-    TResult Map<TResult>(Func<TResult>? instanceFactory = null) where TResult : IMappable<T>;
+    TResult Map<TResult>() where TResult : IMappable<T>, new();
+    TResult Map<TResult>(Func<TResult> instanceFactory) where TResult : IMappable<T>;
 }
