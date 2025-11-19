@@ -54,7 +54,7 @@ public static class DictionaryProjector<T>
             var outVar = Expression.Variable(typeof(object), "out_" + prop.Name);
             variables.Add(outVar); // declare it in the block scope
 
-            var tryCall = Expression.Call(dictParam, tryGetValue,
+            var tryCall = Expression.Call(dictParam, tryGetValue ?? throw new MissingMethodException("Missing TryGetValue method"),
                 Expression.Constant(prop.Name),
                 outVar);
 
