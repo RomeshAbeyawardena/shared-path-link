@@ -2,13 +2,6 @@
 
 namespace geo_auth.Features.BeginAuthentication;
 
-public interface IMachineToken : IMappable<IMachineToken>
-{
-    Guid? MachineId { get; }
-    string? Secret { get; }
-    IEnumerable<string> Scopes { get; }
-}
-
 public class MachineToken : MappableBase<IMachineToken>, IMachineToken
 {
     protected override IMachineToken Source => this;

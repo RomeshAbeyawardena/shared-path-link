@@ -26,13 +26,11 @@ public static partial class Endpoints
         var mediator = services
             .GetRequiredService<IMediator>();
 
-        var jsonOptions = services.GetRequiredService<JsonSerializerOptions>();
         var cancellationToken = executionContext.CancellationToken;
 
         try
         {
-            //var configuration = JsonSerializer.Deserialize<RegisteredMachineConfiguration>(content, jsonOptions);
-
+            
             var validateRequestResult = await mediator.Send(new ValidateRequestCommand() { 
                 AcceptableEncodings = ["jwt"], 
                 HttpContext = request.HttpContext }, cancellationToken);
