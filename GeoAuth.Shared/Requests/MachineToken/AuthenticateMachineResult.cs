@@ -2,7 +2,7 @@
 
 namespace GeoAuth.Shared.Requests.MachineToken;
 
-public record AuthenticateMachineResult(MachineToken? Result, Exception? Exception = null) : ResultBase<MachineToken>(Result, Exception)
+public record AuthenticateMachineResult(AuthenticatedMachineToken? Result, Exception? Exception = null) : ResultBase<AuthenticatedMachineToken>(Result, Exception)
 {
 
 }
